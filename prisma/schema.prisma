@@ -1,0 +1,122 @@
+// Prisma Schema — Restaurant La Virgule (Niort / Chauray)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────── ENUMS ───────────────────────────
+
+enum DishCategory {
+  STARTER
+  MAIN
+  DESSERT
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum ServiceSlot {
+  LUNCH
+  DINNER
+}
+
+// ─────────────────────────── MODELS ──────────────────────────
+
+/// Utilisateur administrateur (back-office)
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+/// Plat de la carte
+model Dish {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  price       Decimal      @db.Decimal(8, 2)
+  category    DishCategory
+  isAvailable Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([category, isAvailable])
+  @@map("dishes")
+}
+
+/// Menu du jour
+model MenuOfTheDay {
+  id             String   @id @default(cuid())
+  date           DateTime @unique @db.Date
+  starterName    String
+  mainCourseName String
+  dessertName    String
+  price          Decimal  @db.Decimal(8, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("menus_of_the_day")
+}
+
+/// Espace du restaurant (3 salles intérieures + terrasse)
+model Space {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  capacity     Int
+  isOutdoor    Boolean       @default(false)
+  description  String?
+  imageUrl     String?
+  reservations Reservation[]
+
+  @@map("spaces")
+}
+
+/// Réservation client (< 12 pers. = CONFIRMED, >= 12 pers. = PENDING / devis groupe)
+model Reservation {
+  id           String            @id @default(cuid())
+  customerName String
+  firstName    String
+  email        String
+  phone        String
+  date         DateTime
+  slot         ServiceSlot       @default(LUNCH)
+  guestCount   Int
+  status       ReservationStatus @default(PENDING)
+  isGroup      Boolean           @default(false)
+  message      String?
+  spaceId      String?
+  space        Space?            @relation(fields: [spaceId], references: [id], onDelete: SetNull)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([date, status])
+  @@index([spaceId])
+  @@map("reservations")
+}
+
+/// Message envoyé via le formulaire de contact
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}

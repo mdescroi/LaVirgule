@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { dishSchema, menuOfTheDaySchema } from "@/lib/validations";
 
-type ActionResult = { success: true } | { success: false; error: string };
+type ActionResult =
+  | { success: true; warning?: string }
+  | { success: false; error: string };
 
 async function assertAdmin(): Promise<void> {
   const userId = await getSessionUserId();
@@ -101,6 +103,150 @@ export async function upsertMenuOfTheDay(formData: FormData): Promise<ActionResu
 }
 
 // ─────────────────────── Réservations ───────────────────────
+
+export async function createReservationAdmin(formData: FormData): Promise<ActionResult> {
+  await assertAdmin();
+
+  const firstName = formData.get("firstName")?.toString()?.trim();
+  const customerName = formData.get("customerName")?.toString()?.trim();
+  const email = formData.get("email")?.toString()?.trim() ?? "";
+  const phone = formData.get("phone")?.toString()?.trim();
+  const date = formData.get("date")?.toString();
+  const slot = formData.get("slot")?.toString();
+  const guestCountRaw = Number(formData.get("guestCount"));
+  const spaceIdRaw = formData.get("spaceId")?.toString();
+  const message = formData.get("message")?.toString()?.trim() ?? null;
+  const statusRaw = formData.get("status")?.toString() ?? "CONFIRMED";
+
+  if (!firstName || !customerName || !phone || !date || !slot) {
+    return { success: false, error: "Champs obligatoires manquants." };
+  }
+  if (!["LUNCH", "DINNER"].includes(slot)) {
+    return { success: false, error: "Créneau invalide." };
+  }
+  if (!["PENDING", "CONFIRMED", "CANCELLED"].includes(statusRaw)) {
+    return { success: false, error: "Statut invalide." };
+  }
+
+  const reservationDate = new Date(date);
+  if (Number.isNaN(reservationDate.getTime())) {
+    return { success: false, error: "Date invalide." };
+  }
+
+  const guestCount = Number.isInteger(guestCountRaw) && guestCountRaw > 0 ? guestCountRaw : 1;
+
+  let spaceId: string | null = null;
+  if (spaceIdRaw && spaceIdRaw !== "any") {
+    const space = await prisma.space.findUnique({ where: { id: spaceIdRaw } });
+    if (!space) return { success: false, error: "Espace inconnu." };
+    spaceId = space.id;
+  }
+
+  const isGroupExplicit = formData.get("isGroup")?.toString();
+  const isGroup =
+    isGroupExplicit === "1" ? true : isGroupExplicit === "0" ? false : guestCount >= 12;
+
+  await prisma.reservation.create({
+    data: {
+      firstName,
+      customerName,
+      email,
+      phone,
+      date: reservationDate,
+      slot: slot as "LUNCH" | "DINNER",
+      guestCount,
+      status: statusRaw as "PENDING" | "CONFIRMED" | "CANCELLED",
+      isGroup,
+      message: message || null,
+      spaceId,
+    },
+  });
+
+  revalidatePath("/admin/reservations");
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function updateReservationAdmin(formData: FormData): Promise<ActionResult> {
+  await assertAdmin();
+
+  const id = formData.get("id")?.toString();
+  if (!id) return { success: false, error: "Identifiant manquant." };
+
+  const firstName = formData.get("firstName")?.toString()?.trim();
+  const customerName = formData.get("customerName")?.toString()?.trim();
+  const email = formData.get("email")?.toString()?.trim() ?? "";
+  const phone = formData.get("phone")?.toString()?.trim();
+  const date = formData.get("date")?.toString();
+  const slot = formData.get("slot")?.toString();
+  const guestCountRaw = Number(formData.get("guestCount"));
+  const spaceIdRaw = formData.get("spaceId")?.toString();
+  const message = formData.get("message")?.toString()?.trim() ?? null;
+  const statusRaw = formData.get("status")?.toString() ?? "CONFIRMED";
+
+  if (!firstName || !customerName || !phone || !date || !slot) {
+    return { success: false, error: "Champs obligatoires manquants." };
+  }
+  if (!["LUNCH", "DINNER"].includes(slot)) {
+    return { success: false, error: "Créneau invalide." };
+  }
+  if (!["PENDING", "CONFIRMED", "CANCELLED"].includes(statusRaw)) {
+    return { success: false, error: "Statut invalide." };
+  }
+
+  const reservationDate = new Date(date);
+  if (Number.isNaN(reservationDate.getTime())) {
+    return { success: false, error: "Date invalide." };
+  }
+
+  const guestCount = Number.isInteger(guestCountRaw) && guestCountRaw > 0 ? guestCountRaw : 1;
+  const isGroup = guestCount >= 12;
+
+  let spaceId: string | null = null;
+  let spaceWarning: string | undefined;
+  if (spaceIdRaw && spaceIdRaw !== "any") {
+    const space = await prisma.space.findUnique({ where: { id: spaceIdRaw } });
+    if (!space) return { success: false, error: "Espace inconnu." };
+    spaceId = space.id;
+
+    // Vérifier si cette salle est privatisée par un autre groupe confirmé sur le même créneau
+    const conflict = await prisma.reservation.findFirst({
+      where: {
+        id: { not: id },
+        spaceId,
+        date: new Date(date),
+        slot: slot as "LUNCH" | "DINNER",
+        isGroup: true,
+        status: "CONFIRMED",
+      },
+      select: { firstName: true, customerName: true },
+    });
+    if (conflict) {
+      spaceWarning = `Attention : cette salle est déjà privatisée par le groupe ${conflict.firstName} ${conflict.customerName} sur ce créneau. La modification a été enregistrée, mais un conflit existe.`;
+    }
+  }
+
+  await prisma.reservation.update({
+    where: { id },
+    data: {
+      firstName,
+      customerName,
+      email,
+      phone,
+      date: reservationDate,
+      slot: slot as "LUNCH" | "DINNER",
+      guestCount,
+      status: statusRaw as "PENDING" | "CONFIRMED" | "CANCELLED",
+      isGroup,
+      message: message || null,
+      spaceId,
+    },
+  });
+
+  revalidatePath("/admin/reservations");
+  revalidatePath("/admin");
+  return { success: true, warning: spaceWarning };
+}
 
 export async function updateReservationStatus(formData: FormData): Promise<void> {
   await assertAdmin();

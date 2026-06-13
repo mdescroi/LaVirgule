@@ -38,14 +38,36 @@ export async function createReservation(
     return { success: false, error: "La date doit être dans le futur." };
   }
 
-  // Logique B2B : >= 12 personnes → demande de privatisation (PENDING)
+  // Logique B2B : >= 12 personnes → demande de privatisation (PENDING), pas de salle choisie
   const isGroup = data.guestCount >= RESTAURANT.groupThreshold;
 
-  // Vérifie que l'espace existe si fourni (et ignore la valeur "any")
+  // Pour un groupe, la salle n'est JAMAIS choisie par le client :
+  // le restaurant confirme et affecte une salle après contact.
   let spaceId: string | null = null;
-  if (data.spaceId && data.spaceId !== "any") {
+  if (!isGroup && data.spaceId && data.spaceId !== "any") {
     const space = await prisma.space.findUnique({ where: { id: data.spaceId } });
     if (!space) return { success: false, error: "Espace inconnu." };
+
+    // Vérifie que la salle n'est pas privatisée par un groupe confirmé
+    const sameDay = new Date(data.date);
+    sameDay.setUTCHours(0, 0, 0, 0);
+    const nextDay = new Date(sameDay);
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+    const blocked = await prisma.reservation.findFirst({
+      where: {
+        spaceId: space.id,
+        slot: data.slot,
+        isGroup: true,
+        status: "CONFIRMED",
+        date: { gte: sameDay, lt: nextDay },
+      },
+    });
+    if (blocked) {
+      return {
+        success: false,
+        error: `La ${space.name} est privatisée pour ce créneau. Choisissez un autre espace ou contactez-nous.`,
+      };
+    }
     spaceId = space.id;
   }
 

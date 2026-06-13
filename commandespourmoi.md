@@ -12,3 +12,7 @@ npm run dev            # → http://localhost:3000
 
 
 https://www.instagram.com/restaurantlavirgulechauray/
+
+Accès admin : http://localhost:3000/admin — 
+id:admin@restaurantlavirgule.fr
+mdp:ChangezMoi79!

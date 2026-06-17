@@ -19,24 +19,31 @@ async function main() {
   // ── Espaces ────────────────────────────────────────────
   const spaces = [
     {
-      name: "Salle 1",
-      capacity: 40,
+      name: "Salle Principale",
+      capacity: 50,
       isOutdoor: false,
-      description: "Notre salle principale, lumineuse et chaleureuse.",
-      imageUrl: "/img/salle2-1024x682.jpg",
+      description: "Notre salle principale à l'entrée, spacieuse et accueillante.",
+      imageUrl: "/img/salleprincipale.jpg",
     },
     {
       name: "Salle 2",
-      capacity: 30,
+      capacity: 40,
       isOutdoor: false,
-      description: "Une salle intimiste, idéale pour les repas d'affaires.",
-      imageUrl: "/img/salle3-1024x682.jpg",
+      description: "Une salle chaleureuse et lumineuse.",
+      imageUrl: "/img/salle2-1024x682.jpg",
     },
     {
       name: "Salle 3",
-      capacity: 50,
+      capacity: 30,
       isOutdoor: false,
-      description: "Notre salle de réception, parfaite pour vos groupes et séminaires.",
+      description: "Une salle intimiste, idéale pour vos moments de calme.",
+      imageUrl: "/img/salle3-1024x682.jpg",
+    },
+    {
+      name: "Salle de Réception",
+      capacity: 60,
+      isOutdoor: false,
+      description: "Idéale pour vos groupes, séminaires et événements.",
       imageUrl: "/img/salle-reception-3-1-1024x682.jpg",
     },
     {
@@ -47,10 +54,14 @@ async function main() {
       imageUrl: "/img/terrasse-1024x682.jpg",
     },
   ];
+
+  // On vide les anciens espaces pour éviter les conflits de noms/IDs lors du reclassement
+  await prisma.space.deleteMany({});
+  
   for (const s of spaces) {
-    await prisma.space.upsert({ where: { name: s.name }, update: s, create: s });
+    await prisma.space.create({ data: s });
   }
-  console.log("✔ 4 espaces créés");
+  console.log(`✔ ${spaces.length} espaces créés`);
 
   // ── Carte ──────────────────────────────────────────────
   const dishes = [

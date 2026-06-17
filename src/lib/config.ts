@@ -24,4 +24,5 @@ export const RESTAURANT = {
 export const SERVICE_SLOTS = [
   { value: "LUNCH", label: "Midi (12h – 14h)" },
   { value: "DINNER", label: "Soir (19h – 21h30)" },
+  { value: "OTHER", label: "Autre (Journée entière, événement...)" },
 ] as const;

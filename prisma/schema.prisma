@@ -26,6 +26,7 @@ enum ReservationStatus {
 enum ServiceSlot {
   LUNCH
   DINNER
+  OTHER
 }
 
 // ─────────────────────────── MODELS ──────────────────────────

@@ -155,7 +155,7 @@ function TableForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SERVICE_SLOTS.map((s) => (
+              {SERVICE_SLOTS.filter((s) => s.value !== "OTHER").map((s) => (
                 <SelectItem key={s.value} value={s.value}>
                   {s.label}
                 </SelectItem>

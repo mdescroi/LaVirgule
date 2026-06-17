@@ -42,7 +42,7 @@ export function SiteFooter() {
           </p>
           <div className="mt-4 flex gap-3">
             <a
-              href="https://www.facebook.com"
+              href="https://www.facebook.com/restaurantlavirgule/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"

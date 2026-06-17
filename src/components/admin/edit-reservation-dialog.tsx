@@ -38,7 +38,7 @@ export type ReservationData = {
   email: string;
   phone: string;
   date: string; // YYYY-MM-DD
-  slot: "LUNCH" | "DINNER";
+  slot: "LUNCH" | "DINNER" | "OTHER";
   guestCount: number;
   spaceId: string | null;
   status: "PENDING" | "CONFIRMED" | "CANCELLED";

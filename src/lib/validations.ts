@@ -10,7 +10,7 @@ export const reservationSchema = z.object({
     .max(20)
     .regex(/^[+0-9 .()-]+$/, "Téléphone invalide"),
   date: z.string().refine((v) => !Number.isNaN(Date.parse(v)), "Date invalide"),
-  slot: z.enum(["LUNCH", "DINNER"]),
+  slot: z.enum(["LUNCH", "DINNER", "OTHER"]),
   guestCount: z.coerce.number().int().min(1, "Minimum 1 personne").max(200),
   spaceId: z.string().optional(),
   message: z.string().max(2000).optional(),

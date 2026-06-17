@@ -235,10 +235,12 @@ export default async function AdminReservationsPage({
                           "inline-block rounded-full px-2 py-0.5 text-xs font-medium",
                           r.slot === "LUNCH"
                             ? "bg-sky-100 text-sky-800"
-                            : "bg-indigo-100 text-indigo-800"
+                            : r.slot === "DINNER"
+                              ? "bg-indigo-100 text-indigo-800"
+                              : "bg-violet-100 text-violet-800"
                         )}
                       >
-                        {r.slot === "LUNCH" ? "Midi" : "Soir"}
+                        {r.slot === "LUNCH" ? "Midi" : r.slot === "DINNER" ? "Soir" : "Autre"}
                       </span>
                     </TableCell>
                     <TableCell>

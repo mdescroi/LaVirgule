@@ -89,6 +89,11 @@ export function SiteFooter({ hoursLine1, hoursLine2, hoursLine3 }: SiteFooterPro
           <h3 className="font-semibold text-white">Contact</h3>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
+              <Link href="/evenements" className="transition-colors hover:text-amber-400">
+                Événements
+              </Link>
+            </li>
+            <li>
               <a
                 href={RESTAURANT.phoneHref}
                 className="flex items-center gap-2 transition-colors hover:text-amber-400"

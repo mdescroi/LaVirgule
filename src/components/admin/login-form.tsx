@@ -32,7 +32,7 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="username"
-          placeholder="admin@restaurantlavirgule.fr"
+          placeholder="LaVirguleAdmin"
         />
       </div>
       <div className="space-y-2">

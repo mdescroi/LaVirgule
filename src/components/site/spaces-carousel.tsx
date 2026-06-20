@@ -87,13 +87,13 @@ export function SpacesCarousel({ spaces }: { spaces: SpaceSlide[] }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center">
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-400">
-            4 espaces, 1 adresse
+            5 espaces, 1 adresse
           </p>
           <h2 className="mt-3 font-serif text-4xl font-bold sm:text-5xl">
             Nos Espaces
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-stone-400">
-            Trois salles intérieures et une terrasse extérieure : du déjeuner en
+            Quatre salles intérieures et une terrasse extérieure : du déjeuner en
             tête-à-tête au séminaire d&apos;entreprise, chaque espace s&apos;adapte à
             votre événement.
           </p>
@@ -189,8 +189,7 @@ export function SpacesCarousel({ spaces }: { spaces: SpaceSlide[] }) {
             </h3>
             <p className="mx-auto mt-4 max-w-2xl text-stone-400">
               Séminaires, repas d&apos;équipe, réceptions… Nous privatisons nos salles
-              pour vos événements à partir de 12 personnes, et accueillons vos
-              groupes le soir (15 personnes et plus) de janvier à août.
+              pour vos événements à partir de 12 personnes.
             </p>
             <Button
               asChild

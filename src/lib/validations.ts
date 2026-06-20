@@ -41,7 +41,9 @@ export const menuOfTheDaySchema = z.object({
   starterName: z.string().min(1, "Entrée requise").max(150),
   mainCourseName: z.string().min(1, "Plat requis").max(150),
   dessertName: z.string().min(1, "Dessert requis").max(150),
-  price: z.coerce.number().min(0).max(999),
+  priceStarterMain: z.coerce.number().min(0).max(999),
+  priceFullMenu: z.coerce.number().min(0).max(999),
+  priceMainDessert: z.coerce.number().min(0).max(999),
 });
 
 export const loginSchema = z.object({
@@ -58,4 +60,14 @@ export const siteSettingsSchema = z.object({
 export const dishSubCategorySchema = z.object({
   name: z.string().min(1, "Nom requis").max(80),
   parentCategory: z.enum(["STARTER", "MAIN", "DESSERT"]),
+});
+
+export const eventSchema = z.object({
+  title: z.string().min(1, "Titre requis").max(150),
+  description: z.string().min(1, "Description requise").max(2000),
+  date: z.string().refine((v) => !Number.isNaN(Date.parse(v)), "Date invalide"),
+  endDate: z.string().optional().refine((v) => !v || !Number.isNaN(Date.parse(v)), "Date de fin invalide"),
+  location: z.string().max(200).optional(),
+  imageUrl: z.string().max(500).optional().or(z.literal("")),
+  isPublished: z.coerce.boolean(),
 });

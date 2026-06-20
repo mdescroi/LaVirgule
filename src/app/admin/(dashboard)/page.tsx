@@ -108,11 +108,15 @@ export default async function AdminDashboardPage() {
                     {item.label}
                   </span>
                   <span className="flex-1 font-medium text-stone-900">{item.value}</span>
-                  <span className="text-sm text-stone-500">
-                    {Number(todayMenu.price).toFixed(2)} €
-                  </span>
                 </li>
               ))}
+              <li className="flex flex-wrap gap-3 py-3 text-sm text-stone-500">
+                <span>E+P : {Number(todayMenu.priceStarterMain).toFixed(2)} €</span>
+                <span>·</span>
+                <span>Complet : {Number(todayMenu.priceFullMenu).toFixed(2)} €</span>
+                <span>·</span>
+                <span>P+D : {Number(todayMenu.priceMainDessert).toFixed(2)} €</span>
+              </li>
             </ul>
           )}
         </CardContent>

@@ -6,9 +6,9 @@ import { Clock } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 const DEFAULT_SETTINGS = {
-  hoursLine1: "De janvier à août : ouvert uniquement le midi, de 12h à 14h.",
-  hoursLine2: "Groupes acceptés le soir à partir de 15 personnes (janv. à août).",
-  hoursLine3: "De septembre à décembre : ouvert le midi (12h–14h) et le soir (19h–21h30).",
+  hoursLine1: "Service du midi de 12h à 14h.",
+  hoursLine2: "Service du soir de 19h à 21h",
+  hoursLine3: "Du Lundi au Vendredi",
 };
 
 export default async function AdminHorairesPage() {

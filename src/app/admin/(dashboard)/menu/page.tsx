@@ -83,7 +83,9 @@ export default async function AdminMenuPage() {
                     starterName: menuOfTheDay.starterName,
                     mainCourseName: menuOfTheDay.mainCourseName,
                     dessertName: menuOfTheDay.dessertName,
-                    price: Number(menuOfTheDay.price),
+                    priceStarterMain: Number(menuOfTheDay.priceStarterMain),
+                    priceFullMenu: Number(menuOfTheDay.priceFullMenu),
+                    priceMainDessert: Number(menuOfTheDay.priceMainDessert),
                   }
                 : null
             }

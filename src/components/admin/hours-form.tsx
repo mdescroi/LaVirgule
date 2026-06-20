@@ -43,7 +43,7 @@ export function HoursForm({ settings }: { settings: HoursData }) {
           rows={2}
           maxLength={300}
           defaultValue={settings.hoursLine1}
-          placeholder="Ex : De janvier à août : ouvert uniquement le midi, de 12h à 14h."
+          placeholder="Service du midi de 12h à 14h."
         />
         <p className="text-xs text-stone-400">
           Décrivez vos horaires habituels pour la première période de l&apos;année.
@@ -60,7 +60,7 @@ export function HoursForm({ settings }: { settings: HoursData }) {
           rows={2}
           maxLength={300}
           defaultValue={settings.hoursLine2}
-          placeholder="Ex : Groupes acceptés le soir à partir de 15 personnes (janv. à août)."
+          placeholder="Du Lundi au Vendredi"
         />
         <p className="text-xs text-stone-400">
           Optionnel — pour préciser une règle particulière (groupes, fermetures, etc.).

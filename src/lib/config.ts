@@ -12,7 +12,7 @@ export const RESTAURANT = {
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=83+rue+Andr%C3%A9+Bellot+79180+Chauray",
   hours: {
-    janToAug: "De janvier à août : ouvert uniquement le midi, de 12h à 14h.",
+    janToAug: "Service du midi de 12h à 14h.",
     janToAugGroups:
       "Possibilité d'accueillir des groupes le soir à partir de 15 personnes durant cette même période.",
     sepToDec:

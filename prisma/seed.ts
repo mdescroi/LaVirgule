@@ -147,9 +147,9 @@ async function main() {
     update: {},
     create: {
       id: "singleton",
-      hoursLine1: "De janvier à août : ouvert uniquement le midi, de 12h à 14h.",
-      hoursLine2: "Groupes acceptés le soir à partir de 15 personnes (janv. à août).",
-      hoursLine3: "De septembre à décembre : ouvert le midi (12h–14h) et le soir (19h–21h30).",
+      hoursLine1: "Service du midi de 12h à 14h.",
+      hoursLine2: "Service du soir de 19h à 21h",
+      hoursLine3: "Du Lundi au Vendredi",
     },
   });
   console.log("✔ Paramètres du site créés");
@@ -165,7 +165,9 @@ async function main() {
       starterName: "Velouté de butternut et noisettes torréfiées",
       mainCourseName: "Blanquette de veau à l'ancienne, riz pilaf",
       dessertName: "Île flottante aux pralines roses",
-      price: 16.9,
+      priceStarterMain: 14.9,
+      priceFullMenu: 16.9,
+      priceMainDessert: 14.9,
     },
   });
   console.log("✔ Menu du jour créé");

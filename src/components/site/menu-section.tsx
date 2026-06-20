@@ -1,6 +1,5 @@
 ﻿import { prisma } from "@/lib/prisma";
 import { Reveal } from "@/components/site/reveal";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 function formatPrice(price: unknown): string {
@@ -30,9 +29,6 @@ export async function MenuSection() {
         {menuOfTheDay ? (
           <Reveal delay={0.15} className="mx-auto mt-12 max-w-2xl">
             <div className="relative rounded-2xl border border-amber-200 bg-white p-10 shadow-xl shadow-amber-100/50">
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-stone-950 hover:bg-amber-500">
-                {formatPrice(menuOfTheDay.price)} · Entrée · Plat · Dessert
-              </Badge>
               <ul className="space-y-6 text-center">
                 <li>
                   <p className="text-xs uppercase tracking-widest text-stone-400">Entrée</p>
@@ -55,6 +51,34 @@ export async function MenuSection() {
                   </p>
                 </li>
               </ul>
+
+              {/* Grille des 3 formules */}
+              <div className="mt-8 grid grid-cols-3 divide-x divide-amber-100 rounded-xl border border-amber-100 bg-amber-50/60 text-center">
+                <div className="px-3 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
+                    Entrée + Plat
+                  </p>
+                  <p className="mt-1 font-serif text-xl font-bold text-amber-600">
+                    {formatPrice(menuOfTheDay.priceStarterMain)}
+                  </p>
+                </div>
+                <div className="px-3 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
+                    Menu complet
+                  </p>
+                  <p className="mt-1 font-serif text-xl font-bold text-amber-600">
+                    {formatPrice(menuOfTheDay.priceFullMenu)}
+                  </p>
+                </div>
+                <div className="px-3 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
+                    Plat + Dessert
+                  </p>
+                  <p className="mt-1 font-serif text-xl font-bold text-amber-600">
+                    {formatPrice(menuOfTheDay.priceMainDessert)}
+                  </p>
+                </div>
+              </div>
             </div>
           </Reveal>
         ) : (

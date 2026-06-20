@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { unlink } from "fs/promises";
+import path from "path";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
-import { dishSchema, menuOfTheDaySchema, siteSettingsSchema, dishSubCategorySchema } from "@/lib/validations";
+import { dishSchema, menuOfTheDaySchema, siteSettingsSchema, dishSubCategorySchema, eventSchema } from "@/lib/validations";
 
 type ActionResult =
   | { success: true; warning?: string }
@@ -75,7 +77,9 @@ export async function upsertMenuOfTheDay(formData: FormData): Promise<ActionResu
     starterName: formData.get("starterName"),
     mainCourseName: formData.get("mainCourseName"),
     dessertName: formData.get("dessertName"),
-    price: formData.get("price"),
+    priceStarterMain: formData.get("priceStarterMain"),
+    priceFullMenu: formData.get("priceFullMenu"),
+    priceMainDessert: formData.get("priceMainDessert"),
   });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" };
@@ -90,14 +94,18 @@ export async function upsertMenuOfTheDay(formData: FormData): Promise<ActionResu
       starterName: parsed.data.starterName,
       mainCourseName: parsed.data.mainCourseName,
       dessertName: parsed.data.dessertName,
-      price: parsed.data.price,
+      priceStarterMain: parsed.data.priceStarterMain,
+      priceFullMenu: parsed.data.priceFullMenu,
+      priceMainDessert: parsed.data.priceMainDessert,
     },
     create: {
       date,
       starterName: parsed.data.starterName,
       mainCourseName: parsed.data.mainCourseName,
       dessertName: parsed.data.dessertName,
-      price: parsed.data.price,
+      priceStarterMain: parsed.data.priceStarterMain,
+      priceFullMenu: parsed.data.priceFullMenu,
+      priceMainDessert: parsed.data.priceMainDessert,
     },
   });
   revalidatePath("/admin/menu");
@@ -318,4 +326,74 @@ export async function deleteDishSubCategory(formData: FormData): Promise<void> {
   await prisma.dishSubCategory.delete({ where: { id } });
   revalidatePath("/admin/menu");
   revalidatePath("/carte");
+}
+
+// ─────────────────────── Événements ──────────────────────────
+
+async function deleteLocalEventImage(imageUrl: string | null) {
+  if (!imageUrl?.startsWith("/img/events/")) return;
+  try {
+    await unlink(path.join(process.cwd(), "public", imageUrl));
+  } catch {
+    // Le fichier peut déjà être absent
+  }
+}
+
+export async function upsertEvent(formData: FormData): Promise<ActionResult> {
+  await assertAdmin();
+  const id = formData.get("id")?.toString() || null;
+  const parsed = eventSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    date: formData.get("date"),
+    endDate: formData.get("endDate") || undefined,
+    location: formData.get("location") || undefined,
+    imageUrl: formData.get("imageUrl") || undefined,
+    isPublished: formData.get("isPublished") === "on",
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" };
+  }
+  const { date, endDate, imageUrl, location, ...rest } = parsed.data;
+  const data = {
+    ...rest,
+    date: new Date(date),
+    endDate: endDate ? new Date(endDate) : null,
+    imageUrl: imageUrl || null,
+    location: location || null,
+  };
+  if (id) {
+    const existing = await prisma.event.findUnique({ where: { id }, select: { imageUrl: true } });
+    await prisma.event.update({ where: { id }, data });
+    if (existing?.imageUrl !== data.imageUrl) {
+      await deleteLocalEventImage(existing?.imageUrl ?? null);
+    }
+  } else {
+    await prisma.event.create({ data });
+  }
+  revalidatePath("/admin/evenements");
+  revalidatePath("/evenements");
+  return { success: true };
+}
+
+export async function deleteEvent(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const id = formData.get("id")?.toString();
+  if (!id) return;
+  const event = await prisma.event.findUnique({ where: { id }, select: { imageUrl: true } });
+  await prisma.event.delete({ where: { id } });
+  await deleteLocalEventImage(event?.imageUrl ?? null);
+  revalidatePath("/admin/evenements");
+  revalidatePath("/evenements");
+}
+
+export async function toggleEventPublished(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const id = formData.get("id")?.toString();
+  if (!id) return;
+  const event = await prisma.event.findUnique({ where: { id } });
+  if (!event) return;
+  await prisma.event.update({ where: { id }, data: { isPublished: !event.isPublished } });
+  revalidatePath("/admin/evenements");
+  revalidatePath("/evenements");
 }

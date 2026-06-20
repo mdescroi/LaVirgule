@@ -48,3 +48,9 @@ export const loginSchema = z.object({
   email: z.string().email("Email invalide"),
   password: z.string().min(1, "Mot de passe requis"),
 });
+
+export const siteSettingsSchema = z.object({
+  hoursLine1: z.string().min(1, "Ligne 1 requise").max(300),
+  hoursLine2: z.string().max(300),
+  hoursLine3: z.string().max(300),
+});

@@ -87,7 +87,7 @@ export async function MenuSection() {
         <div id="carte" className="mt-28 scroll-mt-24">
           <Reveal className="text-center">
             <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-600">
-              Fait maison
+              Fait main
             </p>
             <h2 className="mt-3 font-serif text-4xl font-bold text-stone-900 sm:text-5xl">
               La Carte

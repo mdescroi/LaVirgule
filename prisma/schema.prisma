@@ -72,6 +72,17 @@ model MenuOfTheDay {
   @@map("menus_of_the_day")
 }
 
+/// Paramètres du site (singleton id="singleton")
+model SiteSettings {
+  id         String   @id @default("singleton")
+  hoursLine1 String   @default("De janvier à août : ouvert uniquement le midi, de 12h à 14h.")
+  hoursLine2 String   @default("Groupes acceptés le soir à partir de 15 personnes (janv. à août).")
+  hoursLine3 String   @default("De septembre à décembre : midi 12h–14h · soir 19h–21h30.")
+  updatedAt  DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
 /// Espace du restaurant (3 salles intérieures + terrasse)
 model Space {
   id           String        @id @default(cuid())

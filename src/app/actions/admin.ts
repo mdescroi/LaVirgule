@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
-import { dishSchema, menuOfTheDaySchema } from "@/lib/validations";
+import { dishSchema, menuOfTheDaySchema, siteSettingsSchema } from "@/lib/validations";
 
 type ActionResult =
   | { success: true; warning?: string }
@@ -260,4 +260,26 @@ export async function updateReservationStatus(formData: FormData): Promise<void>
   });
   revalidatePath("/admin/reservations");
   revalidatePath("/admin");
+}
+
+// ─────────────────────── Horaires (SiteSettings) ─────────────
+
+export async function updateSiteSettings(formData: FormData): Promise<ActionResult> {
+  await assertAdmin();
+  const parsed = siteSettingsSchema.safeParse({
+    hoursLine1: formData.get("hoursLine1"),
+    hoursLine2: formData.get("hoursLine2") ?? "",
+    hoursLine3: formData.get("hoursLine3") ?? "",
+  });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" };
+  }
+  await prisma.siteSettings.upsert({
+    where: { id: "singleton" },
+    update: parsed.data,
+    create: { id: "singleton", ...parsed.data },
+  });
+  revalidatePath("/admin/horaires");
+  revalidatePath("/");
+  return { success: true };
 }

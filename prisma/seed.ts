@@ -88,6 +88,19 @@ async function main() {
     console.log(`✔ ${dishes.length} plats créés`);
   }
 
+  // ── Paramètres du site (horaires) ─────────────────────
+  await prisma.siteSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: {
+      id: "singleton",
+      hoursLine1: "De janvier à août : ouvert uniquement le midi, de 12h à 14h.",
+      hoursLine2: "Groupes acceptés le soir à partir de 15 personnes (janv. à août).",
+      hoursLine3: "De septembre à décembre : ouvert le midi (12h–14h) et le soir (19h–21h30).",
+    },
+  });
+  console.log("✔ Paramètres du site créés");
+
   // ── Menu du jour ───────────────────────────────────────
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);

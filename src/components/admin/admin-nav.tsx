@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LogOut, UtensilsCrossed } from "lucide-react";
+import { Clock, LayoutDashboard, LogOut, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/menu", label: "Carte & Menu", icon: UtensilsCrossed },
+  { href: "/admin/horaires", label: "Horaires", icon: Clock },
 ];
 
 export function AdminNav() {

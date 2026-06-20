@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronDown, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,7 +75,7 @@ export function HeroSection() {
             variant="outline"
             className="border-white/40 bg-white/10 px-8 text-base text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
           >
-            <Link href="/#carte">Découvrir la carte</Link>
+            <a href="#carte">Découvrir la carte</a>
           </Button>
         </motion.div>
       </div>

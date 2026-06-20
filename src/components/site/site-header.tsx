@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RESTAURANT } from "@/lib/config";
@@ -63,9 +63,12 @@ export function SiteHeader() {
           ))}
           <Button
             asChild
-            className="bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold"
+            className="bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold gap-2"
           >
-            <Link href="/reservation">Réserver</Link>
+            <a href={RESTAURANT.phoneHref}>
+              <Phone className="size-4" />
+              {RESTAURANT.phone}
+            </a>
           </Button>
         </nav>
 
@@ -96,14 +99,14 @@ export function SiteHeader() {
             <li>
               <Button
                 asChild
-                className="w-full bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold"
+                className="w-full bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold gap-2"
               >
-                <Link href="/reservation" onClick={() => setMobileOpen(false)}>
-                  Réserver une table
-                </Link>
+                <a href={RESTAURANT.phoneHref} onClick={() => setMobileOpen(false)}>
+                  <Phone className="size-4" />
+                  Réserver par téléphone
+                </a>
               </Button>
             </li>
-            <li className="pt-2 text-sm text-stone-400">{RESTAURANT.phone}</li>
           </ul>
         </nav>
       )}

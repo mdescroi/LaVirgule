@@ -1,14 +1,125 @@
-import Link from "next/link";
-import { CalendarDays, Clock, Lock, Users, UtensilsCrossed } from "lucide-react";
+import { UtensilsCrossed, BookOpen, CalendarDays } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AddReservationDialog } from "@/components/admin/add-reservation-dialog";
-import { EditReservationDialog } from "@/components/admin/edit-reservation-dialog";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+
+export default async function AdminDashboardPage() {
+  const now = new Date();
+
+  const [activeDishCount, totalDishCount, todayMenu] = await Promise.all([
+    prisma.dish.count({ where: { isAvailable: true } }),
+    prisma.dish.count(),
+    prisma.menuOfTheDay.findFirst({
+      where: {
+        date: {
+          gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+          lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
+        },
+      },
+      include: { dishes: { include: { dish: true } } },
+    }),
+  ]);
+
+  const todayLabel = now.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const stats = [
+    {
+      label: "Plats actifs à la carte",
+      value: activeDishCount,
+      sub: `/ ${totalDishCount} au total`,
+      icon: UtensilsCrossed,
+    },
+    {
+      label: "Menu du jour",
+      value: todayMenu ? todayMenu.dishes.length : 0,
+      sub: todayMenu ? "plat(s) aujourd'hui" : "Non défini",
+      icon: CalendarDays,
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* En-tête */}
+      <div>
+        <h1 className="font-serif text-3xl font-bold text-stone-900">
+          Tableau de bord
+        </h1>
+        <p className="mt-1 text-sm capitalize text-stone-500">{todayLabel}</p>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-stone-500">
+                {stat.label}
+              </CardTitle>
+              <stat.icon className="size-4 text-amber-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline gap-1.5">
+                <p className="text-3xl font-bold text-stone-900">{stat.value}</p>
+                {stat.sub && (
+                  <span className="text-sm font-medium text-stone-400">
+                    {stat.sub}
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Menu du jour */}
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="font-serif text-lg flex items-center gap-2">
+            <BookOpen className="size-4 text-amber-600" />
+            Menu du jour
+          </CardTitle>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/admin/menu">Modifier →</Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {!todayMenu || todayMenu.dishes.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-6 text-center">
+              <p className="text-sm text-stone-400">
+                Aucun menu du jour défini pour aujourd&apos;hui.
+              </p>
+              <Button asChild size="sm" className="bg-amber-500 text-stone-950 hover:bg-amber-400">
+                <Link href="/admin/menu">Définir le menu du jour</Link>
+              </Button>
+            </div>
+          ) : (
+            <ul className="divide-y divide-stone-100">
+              {todayMenu.dishes.map(({ dish }) => (
+                <li key={dish.id} className="flex items-center justify-between py-3">
+                  <span className="font-medium text-stone-900">{dish.name}</span>
+                  <span className="text-sm text-stone-500">
+                    {dish.price != null
+                      ? `${Number(dish.price).toFixed(2)} €`
+                      : "—"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   PENDING: { label: "En attente", className: "bg-amber-100 text-amber-800" },

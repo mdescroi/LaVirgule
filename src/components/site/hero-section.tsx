@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RESTAURANT } from "@/lib/config";
 
 export function HeroSection() {
   return (
@@ -62,9 +63,12 @@ export function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="bg-amber-500 px-8 text-base font-semibold text-stone-950 hover:bg-amber-400"
+            className="bg-amber-500 px-8 text-base font-semibold text-stone-950 hover:bg-amber-400 gap-2"
           >
-            <Link href="/reservation">Réserver une table</Link>
+            <a href={RESTAURANT.phoneHref}>
+              <Phone className="size-5" />
+              Réserver : {RESTAURANT.phone}
+            </a>
           </Button>
           <Button
             asChild
@@ -72,7 +76,7 @@ export function HeroSection() {
             variant="outline"
             className="border-white/40 bg-white/10 px-8 text-base text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
           >
-            <Link href="/reservation?groupe=1">Organiser un événement d&apos;entreprise</Link>
+            <Link href="/#carte">Découvrir la carte</Link>
           </Button>
         </motion.div>
       </div>

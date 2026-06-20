@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Users, Sun, Home } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, Users, Sun, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/reveal";
 import { cn } from "@/lib/utils";
+import { RESTAURANT } from "@/lib/config";
 
 export type SpaceSlide = {
   id: string;
@@ -190,9 +190,12 @@ export function SpacesCarousel({ spaces }: { spaces: SpaceSlide[] }) {
             <Button
               asChild
               size="lg"
-              className="mt-7 bg-amber-500 px-8 font-semibold text-stone-950 hover:bg-amber-400"
+              className="mt-7 bg-amber-500 px-8 font-semibold text-stone-950 hover:bg-amber-400 gap-2"
             >
-              <Link href="/reservation?groupe=1">Demander un devis groupe</Link>
+              <a href={RESTAURANT.phoneHref}>
+                <Phone className="size-5" />
+                Appelez-nous : {RESTAURANT.phone}
+              </a>
             </Button>
           </div>
         </Reveal>

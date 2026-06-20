@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, LayoutDashboard, LogOut, UtensilsCrossed } from "lucide-react";
+import { LayoutDashboard, LogOut, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/admin/reservations", label: "Réservations", icon: CalendarDays },
   { href: "/admin/menu", label: "Carte & Menu", icon: UtensilsCrossed },
 ];
 

@@ -5,6 +5,8 @@ import { Reveal } from "@/components/site/reveal";
 import { RESTAURANT } from "@/lib/config";
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Contact & Accès",
   description: `Contactez le restaurant La Virgule : ${RESTAURANT.fullAddress} — ${RESTAURANT.phone} — ${RESTAURANT.email}`,

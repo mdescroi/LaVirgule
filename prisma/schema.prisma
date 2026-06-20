@@ -80,6 +80,7 @@ model Space {
   isOutdoor    Boolean       @default(false)
   description  String?
   imageUrl     String?
+  sortOrder    Int           @default(0)
   reservations Reservation[]
 
   @@map("spaces")

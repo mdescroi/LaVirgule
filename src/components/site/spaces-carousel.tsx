@@ -20,27 +20,35 @@ export type SpaceSlide = {
 
 const FALLBACK_SLIDES: SpaceSlide[] = [
   {
-    id: "salle-1",
-    name: "Salle 1",
+    id: "salle-cosy",
+    name: "Salle Cosy",
+    capacity: 50,
+    isOutdoor: false,
+    description: "Notre salle principale avec son espace bar : l'endroit idéal pour un moment convivial entre amis ou en famille, dans une atmosphère chaleureuse et décontractée.",
+    imageUrl: "/img/salleprincipale.jpg",
+  },
+  {
+    id: "salle-romantique",
+    name: "Salle Romantique",
     capacity: 40,
     isOutdoor: false,
-    description: "Notre salle principale, lumineuse et chaleureuse.",
+    description: "Un cadre raffiné et élégant, pensé pour les repas intimes. Lumières tamisées et décoration soignée font de cette salle le choix parfait pour vos dîners en amoureux ou vos célébrations.",
     imageUrl: "/img/salle2-1024x682.jpg",
   },
   {
-    id: "salle-2",
-    name: "Salle 2",
+    id: "salle-moderne",
+    name: "Salle Moderne",
     capacity: 30,
     isOutdoor: false,
-    description: "Une salle intimiste, idéale pour les repas d'affaires.",
+    description: "Une atmosphère dynamique et contemporaine, idéale pour vos déjeuners d'affaires, réunions d'équipe ou tout événement qui mérite un cadre au goût du jour.",
     imageUrl: "/img/salle3-1024x682.jpg",
   },
   {
-    id: "salle-3",
-    name: "Salle 3",
+    id: "salle-prestige",
+    name: "Salle Prestige",
     capacity: 50,
     isOutdoor: false,
-    description: "Notre salle de réception, parfaite pour vos groupes et séminaires.",
+    description: "Dédiée aux séminaires et réceptions privées, notre grande salle peut accueillir jusqu'à 50 personnes. Privatisation disponible pour vos événements professionnels et personnels.",
     imageUrl: "/img/salle-reception-3-1-1024x682.jpg",
   },
   {
@@ -48,7 +56,7 @@ const FALLBACK_SLIDES: SpaceSlide[] = [
     name: "Terrasse",
     capacity: 35,
     isOutdoor: true,
-    description: "Notre terrasse extérieure ombragée, pour les beaux jours.",
+    description: "Notre terrasse extérieure ombragée, ouverte aux beaux jours. Profitez d'un repas en plein air dans un cadre verdoyant et apaisant.",
     imageUrl: "/img/terrasse-1024x682.jpg",
   },
 ];

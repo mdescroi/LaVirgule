@@ -17,40 +17,46 @@ async function main() {
   console.log(`✔ Admin créé : ${email}`);
 
   // ── Espaces ────────────────────────────────────────────
+  // L'ordre de création détermine l'ordre d'affichage (tri par createdAt)
   const spaces = [
     {
-      name: "Salle Principale",
+      name: "Salle Cosy",
       capacity: 50,
       isOutdoor: false,
-      description: "Notre salle principale à l'entrée, spacieuse et accueillante.",
+      sortOrder: 1,
+      description: "Notre salle principale avec son espace bar : l'endroit idéal pour un moment convivial entre amis ou en famille, dans une atmosphère chaleureuse et décontractée.",
       imageUrl: "/img/salleprincipale.jpg",
     },
     {
-      name: "Salle 2",
+      name: "Salle Romantique",
       capacity: 40,
       isOutdoor: false,
-      description: "Une salle chaleureuse et lumineuse.",
+      sortOrder: 2,
+      description: "Un cadre raffiné et élégant, pensé pour les repas intimes. Lumières tamisées et décoration soignée font de cette salle le choix parfait pour vos dîners en amoureux ou vos célébrations.",
       imageUrl: "/img/salle2-1024x682.jpg",
     },
     {
-      name: "Salle 3",
+      name: "Salle Moderne",
       capacity: 30,
       isOutdoor: false,
-      description: "Une salle intimiste, idéale pour vos moments de calme.",
+      sortOrder: 3,
+      description: "Une atmosphère dynamique et contemporaine, idéale pour vos déjeuners d'affaires, réunions d'équipe ou tout événement qui mérite un cadre au goût du jour.",
       imageUrl: "/img/salle3-1024x682.jpg",
     },
     {
-      name: "Salle de Réception",
-      capacity: 60,
+      name: "Salle Prestige",
+      capacity: 50,
       isOutdoor: false,
-      description: "Idéale pour vos groupes, séminaires et événements.",
+      sortOrder: 4,
+      description: "Dédiée aux séminaires et réceptions privées, notre grande salle peut accueillir jusqu'à 50 personnes. Privatisation disponible pour vos événements professionnels et personnels.",
       imageUrl: "/img/salle-reception-3-1-1024x682.jpg",
     },
     {
       name: "Terrasse",
       capacity: 35,
       isOutdoor: true,
-      description: "Notre terrasse extérieure ombragée, pour les beaux jours.",
+      sortOrder: 5,
+      description: "Notre terrasse extérieure ombragée, ouverte aux beaux jours. Profitez d'un repas en plein air dans un cadre verdoyant et apaisant.",
       imageUrl: "/img/terrasse-1024x682.jpg",
     },
   ];

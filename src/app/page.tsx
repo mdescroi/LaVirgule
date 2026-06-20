@@ -7,7 +7,7 @@ export const revalidate = 300; // ISR : revalide toutes les 5 minutes
 
 export default async function HomePage() {
   const spaces = await prisma.space
-    .findMany({ orderBy: { name: "asc" } })
+    .findMany({ orderBy: { sortOrder: "asc" } })
     .catch(() => []);
 
   return (

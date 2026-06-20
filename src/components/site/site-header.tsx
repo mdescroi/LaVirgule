@@ -12,8 +12,8 @@ const NAV_LINKS = [
   { href: "/", label: "Accueil" },
   { href: "/carte", label: "La Carte" },
   { href: "/evenements", label: "Événements" },
-  { href: "/#espaces", label: "Nos Espaces" },
-  { href: "/#horaires", label: "Horaires" },
+  { href: "/espaces", label: "Nos Espaces" },
+  { href: "/horaires", label: "Horaires" },
   { href: "/contact", label: "Contact" },
 ];
 

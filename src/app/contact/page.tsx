@@ -40,9 +40,8 @@ export default async function ContactPage() {
               Le restaurant
             </h2>
             <p className="mt-4 leading-relaxed text-stone-600">
-              Le restaurant « La Virgule » vous accueille au {RESTAURANT.address} à{" "}
-              {RESTAURANT.city}. Pour vos demandes d&apos;information ou de
-              réservation, envoyez-nous un email ou remplissez le formulaire
+              La Virgule vous accueille au {RESTAURANT.address} à Chauray. Pour vos demandes de
+              réservation de groupe, de séminaires ou toute autre besoin d&apos;information, envoyez-nous un email ou remplissez le formulaire
               ci-contre.
             </p>
 

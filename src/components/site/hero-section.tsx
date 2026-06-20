@@ -75,13 +75,13 @@ export function HeroSection() {
             variant="outline"
             className="border-white/40 bg-white/10 px-8 text-base text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
           >
-            <a href="#carte">Découvrir la carte</a>
+            <a href="/carte">Découvrir la carte</a>
           </Button>
         </motion.div>
       </div>
 
       <motion.a
-        href="#menu-du-jour"
+        href="/#menu-du-jour"
         aria-label="Découvrir le menu"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 8, 0] }}

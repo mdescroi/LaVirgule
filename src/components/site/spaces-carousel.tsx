@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Phone, Users, Sun, Home } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, Sun, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/reveal";
 import { cn } from "@/lib/utils";
@@ -20,32 +20,32 @@ export type SpaceSlide = {
 
 const FALLBACK_SLIDES: SpaceSlide[] = [
   {
-    id: "salle-cosy",
-    name: "Salle Cosy",
+    id: "salle-lounge",
+    name: "Salle Lounge",
     capacity: 50,
     isOutdoor: false,
     description: "Notre salle principale avec son espace bar : l'endroit idéal pour un moment convivial entre amis ou en famille, dans une atmosphère chaleureuse et décontractée.",
     imageUrl: "/img/salleprincipale.jpg",
   },
   {
-    id: "salle-romantique",
-    name: "Salle Romantique",
+    id: "salle-idylle",
+    name: "Salle Idylle",
     capacity: 40,
     isOutdoor: false,
     description: "Un cadre raffiné et élégant, pensé pour les repas intimes. Lumières tamisées et décoration soignée font de cette salle le choix parfait pour vos dîners en amoureux ou vos célébrations.",
     imageUrl: "/img/salle2-1024x682.jpg",
   },
   {
-    id: "salle-moderne",
-    name: "Salle Moderne",
+    id: "salle-cosy",
+    name: "Salle Cosy",
     capacity: 30,
     isOutdoor: false,
     description: "Une atmosphère dynamique et contemporaine, idéale pour vos déjeuners d'affaires, réunions d'équipe ou tout événement qui mérite un cadre au goût du jour.",
     imageUrl: "/img/salle3-1024x682.jpg",
   },
   {
-    id: "salle-prestige",
-    name: "Salle Prestige",
+    id: "salle-seminaire",
+    name: "Salle Séminaire",
     capacity: 50,
     isOutdoor: false,
     description: "Dédiée aux séminaires et réceptions privées, notre grande salle peut accueillir jusqu'à 50 personnes. Privatisation disponible pour vos événements professionnels et personnels.",
@@ -138,9 +138,6 @@ export function SpacesCarousel({ spaces }: { spaces: SpaceSlide[] }) {
                 </div>
                 <p className="mt-2 max-w-xl text-sm text-stone-200 sm:text-base">
                   {current.description}
-                </p>
-                <p className="mt-2 flex items-center gap-1.5 text-sm text-amber-300">
-                  <Users className="size-4" /> Jusqu&apos;à {current.capacity} couverts
                 </p>
               </div>
             </div>

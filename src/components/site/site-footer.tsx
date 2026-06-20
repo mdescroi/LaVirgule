@@ -5,6 +5,12 @@ import { usePathname } from "next/navigation";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { RESTAURANT } from "@/lib/config";
 
+interface SiteFooterProps {
+  hoursLine1?: string;
+  hoursLine2?: string;
+  hoursLine3?: string;
+}
+
 function FacebookIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
@@ -23,9 +29,13 @@ function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ hoursLine1, hoursLine2, hoursLine3 }: SiteFooterProps = {}) {
   const pathname = usePathname();
   if (pathname.startsWith("/admin")) return null;
+
+  const line1 = hoursLine1 ?? RESTAURANT.hours.janToAug;
+  const line2 = hoursLine2 ?? RESTAURANT.hours.janToAugGroups;
+  const line3 = hoursLine3 ?? RESTAURANT.hours.sepToDec;
 
   return (
     <footer className="bg-stone-950 text-stone-300">
@@ -68,9 +78,9 @@ export function SiteFooter() {
             <Clock className="size-4 text-amber-400" /> Horaires
           </h3>
           <ul className="mt-4 space-y-3 text-sm text-stone-400">
-            <li>{RESTAURANT.hours.janToAug}</li>
-            <li>{RESTAURANT.hours.janToAugGroups}</li>
-            <li>{RESTAURANT.hours.sepToDec}</li>
+            {line1 && <li>{line1}</li>}
+            {line2 && <li>{line2}</li>}
+            {line3 && <li>{line3}</li>}
           </ul>
         </div>
 
@@ -122,7 +132,7 @@ export function SiteFooter() {
 
       <div className="border-t border-stone-800">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-stone-500 sm:flex-row sm:px-6 lg:px-8">
-          <p>
+          <p suppressHydrationWarning>
             © {new Date().getFullYear()} {RESTAURANT.name} — Tous droits réservés.
           </p>
           <Link href="/admin" className="transition-colors hover:text-stone-300">

@@ -29,16 +29,22 @@ export type DishData = {
   description: string;
   price: number;
   category: "STARTER" | "MAIN" | "DESSERT";
+  subCategoryId: string | null;
   isAvailable: boolean;
 };
 
-export function DishFormDialog({ dish }: { dish?: DishData }) {
+type SubCat = { id: string; name: string; parentCategory: string };
+
+export function DishFormDialog({ dish, subCategories = [] }: { dish?: DishData; subCategories?: SubCat[] }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [selectedCategory, setSelectedCategory] = useState<string>(dish?.category ?? "MAIN");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    // "none" → on efface pour que l'action reçoive null
+    if (formData.get("subCategoryId") === "none") formData.delete("subCategoryId");
     startTransition(async () => {
       const result = await upsertDish(formData);
       if (result.success) {
@@ -109,7 +115,11 @@ export function DishFormDialog({ dish }: { dish?: DishData }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="dish-category">Catégorie *</Label>
-              <Select name="category" defaultValue={dish?.category ?? "MAIN"}>
+              <Select
+                name="category"
+                defaultValue={dish?.category ?? "MAIN"}
+                onValueChange={(v) => setSelectedCategory(v)}
+              >
                 <SelectTrigger id="dish-category" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -121,6 +131,25 @@ export function DishFormDialog({ dish }: { dish?: DishData }) {
               </Select>
             </div>
           </div>
+
+          {selectedCategory === "MAIN" && subCategories.filter((sc) => sc.parentCategory === "MAIN").length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="dish-subcat">Sous-catégorie</Label>
+              <Select name="subCategoryId" defaultValue={dish?.subCategoryId ?? "none"}>
+                <SelectTrigger id="dish-subcat" className="w-full">
+                  <SelectValue placeholder="Aucune" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">— Aucune —</SelectItem>
+                  {subCategories
+                    .filter((sc) => sc.parentCategory === "MAIN")
+                    .map((sc) => (
+                      <SelectItem key={sc.id} value={sc.id}>{sc.name}</SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <label className="flex items-center gap-2 text-sm text-stone-700">
             <input

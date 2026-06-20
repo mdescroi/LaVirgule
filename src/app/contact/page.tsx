@@ -3,13 +3,23 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { ContactForm } from "@/components/site/contact-form";
 import { Reveal } from "@/components/site/reveal";
 import { RESTAURANT } from "@/lib/config";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Contact & Accès",
   description: `Contactez le restaurant La Virgule : ${RESTAURANT.fullAddress} — ${RESTAURANT.phone} — ${RESTAURANT.email}`,
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const siteSettings = await prisma.siteSettings
+    .findUnique({ where: { id: "singleton" } })
+    .catch(() => null);
+
+  const hoursLines = [
+    siteSettings?.hoursLine1 ?? RESTAURANT.hours.janToAug,
+    siteSettings?.hoursLine2 ?? RESTAURANT.hours.janToAugGroups,
+    siteSettings?.hoursLine3 ?? RESTAURANT.hours.sepToDec,
+  ].filter(Boolean);
   return (
     <div className="bg-stone-50">
       {/* Bandeau */}
@@ -86,19 +96,9 @@ export default function ContactPage() {
                 <Clock className="size-5 text-amber-600" /> Horaires
               </h2>
               <ul className="mt-4 space-y-3 text-sm leading-relaxed text-stone-700">
-                <li>
-                  <strong>De janvier à août :</strong> ouvert uniquement le midi,
-                  de 12h à 14h.
-                </li>
-                <li>
-                  Possibilité d&apos;accueillir des groupes le soir à partir de 15
-                  personnes durant cette même période.
-                </li>
-                <li>
-                  <strong>De septembre à décembre :</strong> ouvert le midi et le
-                  soir, de 12h à 14h (service du midi) et de 19h à 21h30 (service
-                  du soir).
-                </li>
+                {hoursLines.map((line, i) => (
+                  <li key={i}>{line}</li>
+                ))}
               </ul>
             </div>
           </Reveal>

@@ -1,12 +1,7 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { Reveal } from "@/components/site/reveal";
 import { Badge } from "@/components/ui/badge";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  STARTER: "Entrées",
-  MAIN: "Plats",
-  DESSERT: "Desserts",
-};
+import Link from "next/link";
 
 function formatPrice(price: unknown): string {
   return `${Number(price).toFixed(2).replace(".", ",")} €`;
@@ -16,31 +11,16 @@ export async function MenuSection() {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const [menuOfTheDay, dishes] = await Promise.all([
-    prisma.menuOfTheDay
-      .findFirst({ where: { date: { gte: today } }, orderBy: { date: "asc" } })
-      .catch(() => null),
-    prisma.dish
-      .findMany({
-        where: { isAvailable: true },
-        orderBy: [{ category: "asc" }, { name: "asc" }],
-      })
-      .catch(() => []),
-  ]);
-
-  const grouped = ["STARTER", "MAIN", "DESSERT"].map((cat) => ({
-    category: cat,
-    label: CATEGORY_LABELS[cat],
-    items: dishes.filter((d) => d.category === cat),
-  }));
+  const menuOfTheDay = await prisma.menuOfTheDay
+    .findFirst({ where: { date: { gte: today } }, orderBy: { date: "asc" } })
+    .catch(() => null);
 
   return (
     <section id="menu-du-jour" className="bg-stone-50 py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Menu du jour */}
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center">
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-600">
-            Aujourd&apos;hui
+            Aujourd'hui
           </p>
           <h2 className="mt-3 font-serif text-4xl font-bold text-stone-900 sm:text-5xl">
             Le Menu du Jour
@@ -51,7 +31,7 @@ export async function MenuSection() {
           <Reveal delay={0.15} className="mx-auto mt-12 max-w-2xl">
             <div className="relative rounded-2xl border border-amber-200 bg-white p-10 shadow-xl shadow-amber-100/50">
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-stone-950 hover:bg-amber-500">
-                {formatPrice(menuOfTheDay.price)} — Entrée · Plat · Dessert
+                {formatPrice(menuOfTheDay.price)} · Entrée · Plat · Dessert
               </Badge>
               <ul className="space-y-6 text-center">
                 <li>
@@ -83,48 +63,14 @@ export async function MenuSection() {
           </Reveal>
         )}
 
-        {/* La Carte */}
-        <div id="carte" className="mt-28 scroll-mt-24">
-          <Reveal className="text-center">
-            <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-600">
-              Fait main
-            </p>
-            <h2 className="mt-3 font-serif text-4xl font-bold text-stone-900 sm:text-5xl">
-              La Carte
-            </h2>
-          </Reveal>
-
-          <div className="mt-14 grid gap-12 lg:grid-cols-3">
-            {grouped.map((group, i) => (
-              <Reveal key={group.category} delay={i * 0.12}>
-                <h3 className="border-b-2 border-amber-400 pb-3 font-serif text-2xl font-semibold text-stone-900">
-                  {group.label}
-                </h3>
-                <ul className="mt-6 space-y-6">
-                  {group.items.length === 0 && (
-                    <li className="text-sm text-stone-400">
-                      Carte en cours de mise à jour…
-                    </li>
-                  )}
-                  {group.items.map((dish) => (
-                    <li key={dish.id}>
-                      <div className="flex items-baseline justify-between gap-3">
-                        <span className="font-medium text-stone-800">{dish.name}</span>
-                        <span className="flex-1 border-b border-dotted border-stone-300" />
-                        <span className="font-semibold text-amber-700">
-                          {formatPrice(dish.price)}
-                        </span>
-                      </div>
-                      {dish.description && (
-                        <p className="mt-1 text-sm text-stone-500">{dish.description}</p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+        <Reveal delay={0.3} className="mt-10 text-center">
+          <Link
+            href="/carte"
+            className="inline-flex items-center gap-2 rounded-full border border-amber-400 px-6 py-2.5 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50"
+          >
+            Découvrir toute la carte →
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

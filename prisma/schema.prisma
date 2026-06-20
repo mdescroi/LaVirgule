@@ -43,16 +43,30 @@ model User {
   @@map("users")
 }
 
+/// Sous-catégorie de plat (dynamique, gérable depuis l'admin)
+model DishSubCategory {
+  id             String       @id @default(cuid())
+  name           String
+  parentCategory DishCategory
+  sortOrder      Int          @default(0)
+  dishes         Dish[]
+  createdAt      DateTime     @default(now())
+
+  @@map("dish_sub_categories")
+}
+
 /// Plat de la carte
 model Dish {
-  id          String       @id @default(cuid())
-  name        String
-  description String
-  price       Decimal      @db.Decimal(8, 2)
-  category    DishCategory
-  isAvailable Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id            String           @id @default(cuid())
+  name          String
+  description   String
+  price         Decimal          @db.Decimal(8, 2)
+  category      DishCategory
+  subCategoryId String?
+  subCategory   DishSubCategory? @relation(fields: [subCategoryId], references: [id])
+  isAvailable   Boolean          @default(true)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   @@index([category, isAvailable])
   @@map("dishes")

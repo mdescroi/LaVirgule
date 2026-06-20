@@ -20,7 +20,7 @@ async function main() {
   // L'ordre de création détermine l'ordre d'affichage (tri par createdAt)
   const spaces = [
     {
-      name: "Salle Cosy",
+      name: "Salle Lounge",
       capacity: 50,
       isOutdoor: false,
       sortOrder: 1,
@@ -28,7 +28,7 @@ async function main() {
       imageUrl: "/img/salleprincipale.jpg",
     },
     {
-      name: "Salle Romantique",
+      name: "Salle Idylle",
       capacity: 40,
       isOutdoor: false,
       sortOrder: 2,
@@ -36,7 +36,7 @@ async function main() {
       imageUrl: "/img/salle2-1024x682.jpg",
     },
     {
-      name: "Salle Moderne",
+      name: "Salle Cosy",
       capacity: 30,
       isOutdoor: false,
       sortOrder: 3,
@@ -44,7 +44,7 @@ async function main() {
       imageUrl: "/img/salle3-1024x682.jpg",
     },
     {
-      name: "Salle Prestige",
+      name: "Salle Séminaire",
       capacity: 50,
       isOutdoor: false,
       sortOrder: 4,
@@ -86,6 +86,21 @@ async function main() {
   if (dishCount === 0) {
     await prisma.dish.createMany({ data: dishes });
     console.log(`✔ ${dishes.length} plats créés`);
+  }
+
+  // ── Sous-catégories de plats ──────────────────────────
+  const subCats = [
+    { name: "Nos Salades", parentCategory: "MAIN" as const, sortOrder: 1 },
+    { name: "Nos Viandes", parentCategory: "MAIN" as const, sortOrder: 2 },
+    { name: "Les Burgers", parentCategory: "MAIN" as const, sortOrder: 3 },
+    { name: "Nos Poissons", parentCategory: "MAIN" as const, sortOrder: 4 },
+    { name: "Végétarien", parentCategory: "MAIN" as const, sortOrder: 5 },
+    { name: "Assiette de Fromage", parentCategory: "MAIN" as const, sortOrder: 6 },
+  ];
+  const subCatCount = await prisma.dishSubCategory.count();
+  if (subCatCount === 0) {
+    await prisma.dishSubCategory.createMany({ data: subCats });
+    console.log(`✔ ${subCats.length} sous-catégories créées`);
   }
 
   // ── Paramètres du site (horaires) ─────────────────────

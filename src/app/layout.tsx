@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { RESTAURANT } from "@/lib/config";
+import { prisma } from "@/lib/prisma";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,11 +41,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteSettings = await prisma.siteSettings.findUnique({
+    where: { id: "singleton" },
+  });
+
   return (
     <html
       lang="fr"
@@ -53,7 +58,11 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <SiteHeader />
         <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <SiteFooter
+          hoursLine1={siteSettings?.hoursLine1}
+          hoursLine2={siteSettings?.hoursLine2}
+          hoursLine3={siteSettings?.hoursLine3}
+        />
         <Toaster position="top-center" richColors />
       </body>
     </html>

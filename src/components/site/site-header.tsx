@@ -10,7 +10,7 @@ import { RESTAURANT } from "@/lib/config";
 
 const NAV_LINKS = [
   { href: "/", label: "Accueil" },
-  { href: "/#carte", label: "La Carte" },
+  { href: "/carte", label: "La Carte" },
   { href: "/#espaces", label: "Nos Espaces" },
   { href: "/#horaires", label: "Horaires" },
   { href: "/contact", label: "Contact" },

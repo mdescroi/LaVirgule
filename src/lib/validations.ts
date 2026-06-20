@@ -54,3 +54,8 @@ export const siteSettingsSchema = z.object({
   hoursLine2: z.string().max(300),
   hoursLine3: z.string().max(300),
 });
+
+export const dishSubCategorySchema = z.object({
+  name: z.string().min(1, "Nom requis").max(80),
+  parentCategory: z.enum(["STARTER", "MAIN", "DESSERT"]),
+});

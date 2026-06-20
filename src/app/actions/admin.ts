@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
-import { dishSchema, menuOfTheDaySchema, siteSettingsSchema } from "@/lib/validations";
+import { dishSchema, menuOfTheDaySchema, siteSettingsSchema, dishSubCategorySchema } from "@/lib/validations";
 
 type ActionResult =
   | { success: true; warning?: string }
@@ -19,6 +19,7 @@ async function assertAdmin(): Promise<void> {
 export async function upsertDish(formData: FormData): Promise<ActionResult> {
   await assertAdmin();
   const id = formData.get("id")?.toString() || null;
+  const subCategoryIdRaw = formData.get("subCategoryId")?.toString() || null;
   const parsed = dishSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description") ?? "",
@@ -30,13 +31,15 @@ export async function upsertDish(formData: FormData): Promise<ActionResult> {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" };
   }
 
+  const data = { ...parsed.data, subCategoryId: subCategoryIdRaw || null };
+
   if (id) {
-    await prisma.dish.update({ where: { id }, data: parsed.data });
+    await prisma.dish.update({ where: { id }, data });
   } else {
-    await prisma.dish.create({ data: parsed.data });
+    await prisma.dish.create({ data });
   }
   revalidatePath("/admin/menu");
-  revalidatePath("/");
+  revalidatePath("/carte");
   return { success: true };
 }
 
@@ -46,7 +49,7 @@ export async function deleteDish(formData: FormData): Promise<void> {
   if (!id) return;
   await prisma.dish.delete({ where: { id } });
   revalidatePath("/admin/menu");
-  revalidatePath("/");
+  revalidatePath("/carte");
 }
 
 export async function toggleDishAvailability(formData: FormData): Promise<void> {
@@ -60,7 +63,7 @@ export async function toggleDishAvailability(formData: FormData): Promise<void> 
     data: { isAvailable: !dish.isAvailable },
   });
   revalidatePath("/admin/menu");
-  revalidatePath("/");
+  revalidatePath("/carte");
 }
 
 // ─────────────────────── Menu du jour ───────────────────────
@@ -282,4 +285,37 @@ export async function updateSiteSettings(formData: FormData): Promise<ActionResu
   revalidatePath("/admin/horaires");
   revalidatePath("/");
   return { success: true };
+}
+
+// ─────────────────────── Sous-catégories de plats ────────────
+
+export async function createDishSubCategory(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const parsed = dishSubCategorySchema.safeParse({
+    name: formData.get("name"),
+    parentCategory: formData.get("parentCategory"),
+  });
+  if (!parsed.success) {
+    return;
+  }
+  const maxOrder = await prisma.dishSubCategory.aggregate({
+    where: { parentCategory: parsed.data.parentCategory },
+    _max: { sortOrder: true },
+  });
+  await prisma.dishSubCategory.create({
+    data: { ...parsed.data, sortOrder: (maxOrder._max.sortOrder ?? 0) + 1 },
+  });
+  revalidatePath("/admin/menu");
+  revalidatePath("/carte");
+}
+
+export async function deleteDishSubCategory(formData: FormData): Promise<void> {
+  await assertAdmin();
+  const id = formData.get("id")?.toString();
+  if (!id) return;
+  // Désassocier les plats avant suppression
+  await prisma.dish.updateMany({ where: { subCategoryId: id }, data: { subCategoryId: null } });
+  await prisma.dishSubCategory.delete({ where: { id } });
+  revalidatePath("/admin/menu");
+  revalidatePath("/carte");
 }

@@ -17,9 +17,9 @@ function formatPrice(price: unknown): string {
 }
 
 const CATEGORY_CONFIG = [
-  { key: "STARTER" as const, label: "Entrées", accent: "border-amber-400" },
-  { key: "MAIN" as const, label: "Plats", accent: "border-stone-800" },
-  { key: "DESSERT" as const, label: "Desserts", accent: "border-amber-400" },
+  { key: "STARTER" as const, label: "Entrées",  accent: "border-amber-400",  note: null as string | null },
+  { key: "MAIN"    as const, label: "Plats",    accent: "border-stone-800",  note: null as string | null },
+  { key: "DESSERT" as const, label: "Desserts", accent: "border-amber-400",  note: "Nos desserts sont à commander en début de repas." },
 ];
 
 export default async function CartePage() {
@@ -27,7 +27,7 @@ export default async function CartePage() {
     prisma.dish.findMany({
       where: { isAvailable: true },
       include: { subCategory: true },
-      orderBy: [{ category: "asc" }, { name: "asc" }],
+      orderBy: [{ category: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
     }),
     prisma.dishSubCategory.findMany({
       orderBy: [{ parentCategory: "asc" }, { sortOrder: "asc" }],
@@ -52,56 +52,14 @@ export default async function CartePage() {
       </div>
 
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 space-y-20">
-        {CATEGORY_CONFIG.map(({ key, label, accent }) => {
+        {CATEGORY_CONFIG.map(({ key, label, accent, note }) => {
           const categoryDishes = dishes.filter((d) => d.category === key);
           if (categoryDishes.length === 0) return null;
 
-          if (key === "MAIN") {
-            // Pour les plats : regrouper par sous-catégorie
-            const subCatsForMain = subCategories.filter((sc) => sc.parentCategory === "MAIN");
-            const withSub = categoryDishes.filter((d) => d.subCategoryId);
-            const withoutSub = categoryDishes.filter((d) => !d.subCategoryId);
+          const subCatsForCategory = subCategories.filter((sc) => sc.parentCategory === key);
+          const withSub    = categoryDishes.filter((d) => d.subCategoryId);
+          const withoutSub = categoryDishes.filter((d) => !d.subCategoryId);
 
-            return (
-              <section key={key}>
-                <Reveal>
-                  <h2
-                    className={`border-b-4 ${accent} pb-3 font-serif text-3xl font-bold text-stone-900 sm:text-4xl`}
-                  >
-                    {label}
-                  </h2>
-                </Reveal>
-
-                <div className="mt-8 space-y-10">
-                  {subCatsForMain.map((sc) => {
-                    const items = withSub.filter((d) => d.subCategoryId === sc.id);
-                    if (items.length === 0) return null;
-                    return (
-                      <div key={sc.id}>
-                        <h3 className="mb-4 font-serif text-xl font-semibold text-stone-700 border-b border-stone-200 pb-2">
-                          {sc.name}
-                        </h3>
-                        <DishList dishes={items} />
-                      </div>
-                    );
-                  })}
-
-                  {withoutSub.length > 0 && (
-                    <div>
-                      {subCatsForMain.length > 0 && (
-                        <h3 className="mb-4 font-serif text-xl font-semibold text-stone-700 border-b border-stone-200 pb-2">
-                          Autres plats
-                        </h3>
-                      )}
-                      <DishList dishes={withoutSub} />
-                    </div>
-                  )}
-                </div>
-              </section>
-            );
-          }
-
-          // Entrées & Desserts : pas de sous-catégories
           return (
             <section key={key}>
               <Reveal>
@@ -110,10 +68,39 @@ export default async function CartePage() {
                 >
                   {label}
                 </h2>
-                <div className="mt-8">
-                  <DishList dishes={categoryDishes} />
-                </div>
+                {note && (
+                  <p className="mt-2 text-sm italic text-amber-600">{note}</p>
+                )}
               </Reveal>
+
+              <div className="mt-8 space-y-10">
+                {subCatsForCategory.length > 0 ? (
+                  <>
+                    {subCatsForCategory.map((sc) => {
+                      const items = withSub.filter((d) => d.subCategoryId === sc.id);
+                      if (items.length === 0) return null;
+                      return (
+                        <div key={sc.id}>
+                          <h3 className="mb-4 font-serif text-xl font-semibold text-stone-700 border-b border-stone-200 pb-2">
+                            {sc.name}
+                          </h3>
+                          <DishList dishes={items} />
+                        </div>
+                      );
+                    })}
+                    {withoutSub.length > 0 && (
+                      <div>
+                        <h3 className="mb-4 font-serif text-xl font-semibold text-stone-700 border-b border-stone-200 pb-2">
+                          Autres
+                        </h3>
+                        <DishList dishes={withoutSub} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <DishList dishes={categoryDishes} />
+                )}
+              </div>
             </section>
           );
         })}

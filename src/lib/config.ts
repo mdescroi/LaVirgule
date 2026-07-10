@@ -10,7 +10,7 @@ export const RESTAURANT = {
   email: "contact@restaurantlavirgule.fr",
   emailHref: "mailto:contact@restaurantlavirgule.fr",
   mapsUrl:
-    "https://www.google.com/maps/search/?api=1&query=83+rue+Andr%C3%A9+Bellot+79180+Chauray",
+    "https://www.google.com/maps/place//data=!4m2!3m1!1s0x480730b825acd8bd:0x23cc974a3c7a29cb?sa=X&ved=1t:8290&ictx=111",
   hours: {
     janToAug: "Service du midi de 12h à 14h.",
     janToAugGroups:

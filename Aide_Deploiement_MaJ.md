@@ -90,3 +90,16 @@ curl -sI https://restaurantlavirgulechauray.fr | head -2
 | Modif code uniquement | `git pull` → `npm run build` → `pm2 restart` |
 | + migration Prisma | + `prisma migrate deploy` + `prisma generate` |
 | + données seed (carte) | + `prisma db seed` |
+
+
+Autre aide avec la BDD : 
+Cannot read properties of undefined (reading 'findUnique') sur prisma.siteSettings → le modèle existe dans le schéma mais le client généré ne le connaît pas → client obsolète → prisma generate
+Unknown argument 'sortOrder' sur Space → même cause, le champ a été ajouté dans une migration mais le client n'a jamais été régénéré
+Confirmation via le schéma : j'ai lu schema.prisma et vérifié que SiteSettings et sortOrder sur Space y étaient bien définis — donc le problème n'était pas dans le code mais dans la synchronisation client/DB.
+
+Ordre logique :
+
+D'abord generate (pour que le client TypeScript corresponde au schéma)
+Ensuite migrate deploy (pour que la DB corresponde aussi au schéma) — ce qui a confirmé qu'il y avait 6 migrations jamais appliquées
+Enfin npm run dev pour vérifier que tout passe en 200
+Le contexte du repo dans /memories/repo/projet.md m'a aussi aidé à savoir que la stack utilise Prisma 6 et PostgreSQL via Docker.

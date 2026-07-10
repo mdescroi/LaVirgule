@@ -12,6 +12,7 @@ const NAV = [
   { href: "/admin/menu", label: "Carte & Menu", icon: UtensilsCrossed },
   { href: "/admin/horaires", label: "Horaires", icon: Clock },
   { href: "/admin/evenements", label: "Événements", icon: CalendarDays },
+  { href: "/admin/badging", label: "Badging", icon: CalendarDays },
 ];
 
 export function AdminNav() {

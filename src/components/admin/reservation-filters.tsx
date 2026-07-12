@@ -15,14 +15,22 @@ type SpaceOption = {
 
 type Props = {
   spaces: SpaceOption[];
-  currentDate: string;
+  currentPeriode: string;
+  currentDate: string; // jour précis (YYYY-MM-DD) ou ""
+  currentFrom: string;
+  currentTo: string;
+  currentType: string; // all | group | solo
   currentSalle: string;
   currentStatut: string;
 };
 
 export function ReservationFilters({
   spaces,
+  currentPeriode,
   currentDate,
+  currentFrom,
+  currentTo,
+  currentType,
   currentSalle,
   currentStatut,
 }: Props) {
@@ -31,15 +39,26 @@ export function ReservationFilters({
 
   const buildUrl = useCallback(
     (overrides: Record<string, string>) => {
-      const next = new URLSearchParams({
+      const base: Record<string, string> = {
+        periode: currentPeriode,
         date: currentDate,
+        from: currentFrom,
+        to: currentTo,
+        type: currentType,
         salle: currentSalle,
         statut: currentStatut,
         ...overrides,
-      });
-      return `${pathname}?${next.toString()}`;
+      };
+      const next = new URLSearchParams();
+      for (const [k, v] of Object.entries(base)) {
+        // On omet les valeurs par défaut pour garder des URLs propres
+        if (!v || v === "all" || v === "a_venir") continue;
+        next.set(k, v);
+      }
+      const qs = next.toString();
+      return qs ? `${pathname}?${qs}` : pathname;
     },
-    [pathname, currentDate, currentSalle, currentStatut]
+    [pathname, currentPeriode, currentDate, currentFrom, currentTo, currentType, currentSalle, currentStatut]
   );
 
   const chip =
@@ -48,61 +67,112 @@ export function ReservationFilters({
   const inactive =
     "border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900";
 
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1))
-    .toISOString()
-    .split("T")[0];
+  const periodes = [
+    { value: "a_venir", label: "À venir" },
+    { value: "today", label: "Aujourd'hui" },
+    { value: "tomorrow", label: "Demain" },
+    { value: "semaine", label: "Cette semaine" },
+    { value: "passees", label: "Passées" },
+    { value: "toutes", label: "Toutes" },
+  ];
+
+  const types = [
+    { value: "all", label: "Toutes" },
+    { value: "solo", label: "Individuelles" },
+    { value: "group", label: "Groupes" },
+  ];
 
   return (
     <div className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-      {/* Ligne 1 : date */}
+      {/* Ligne 1 : période */}
       <div className="flex flex-wrap items-center gap-3">
         <span className="w-16 shrink-0 text-xs font-semibold uppercase text-stone-400">
-          Date
+          Période
         </span>
 
-        {/* Raccourcis */}
         <div className="flex flex-wrap gap-2">
-          {[
-            { label: "Toutes", value: "all" },
-            { label: "Aujourd'hui", value: today },
-            { label: "Demain", value: tomorrow },
-          ].map((p) => (
+          {periodes.map((p) => (
             <button
               key={p.value}
               type="button"
-              onClick={() => router.push(buildUrl({ date: p.value }))}
-              className={cn(chip, currentDate === p.value ? active : inactive)}
+              onClick={() =>
+                router.push(buildUrl({ periode: p.value, date: "", from: "", to: "" }))
+              }
+              className={cn(chip, currentPeriode === p.value ? active : inactive)}
             >
               {p.label}
             </button>
           ))}
         </div>
 
-        {/* Sélecteur calendaire */}
+        {/* Jour précis */}
         <div className="flex items-center gap-2">
-          <Label htmlFor="date-picker" className="sr-only">
-            Choisir une date
+          <Label htmlFor="date-picker" className="text-xs text-stone-400">
+            Jour
           </Label>
           <Input
             id="date-picker"
             type="date"
-            className="h-8 w-40 text-xs"
-            value={currentDate !== "all" ? currentDate : ""}
+            className={cn(
+              "h-8 w-40 text-xs",
+              currentPeriode === "jour" && "border-amber-400 ring-1 ring-amber-300"
+            )}
+            value={currentPeriode === "jour" ? currentDate : ""}
             onChange={(e) => {
               if (e.target.value) {
-                router.push(buildUrl({ date: e.target.value }));
+                router.push(
+                  buildUrl({ periode: "jour", date: e.target.value, from: "", to: "" })
+                );
               } else {
-                router.push(buildUrl({ date: "all" }));
+                router.push(buildUrl({ periode: "a_venir", date: "" }));
               }
             }}
           />
-          {currentDate !== "all" && (
+        </div>
+      </div>
+
+      {/* Ligne 2 : plage de dates */}
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="w-16 shrink-0 text-xs font-semibold uppercase text-stone-400">
+          Plage
+        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <Label htmlFor="from-picker" className="text-xs text-stone-400">
+            Du
+          </Label>
+          <Input
+            id="from-picker"
+            type="date"
+            className={cn(
+              "h-8 w-40 text-xs",
+              currentPeriode === "plage" && "border-amber-400 ring-1 ring-amber-300"
+            )}
+            value={currentPeriode === "plage" ? currentFrom : ""}
+            onChange={(e) =>
+              router.push(buildUrl({ periode: "plage", from: e.target.value, date: "" }))
+            }
+          />
+          <Label htmlFor="to-picker" className="text-xs text-stone-400">
+            au
+          </Label>
+          <Input
+            id="to-picker"
+            type="date"
+            className={cn(
+              "h-8 w-40 text-xs",
+              currentPeriode === "plage" && "border-amber-400 ring-1 ring-amber-300"
+            )}
+            value={currentPeriode === "plage" ? currentTo : ""}
+            onChange={(e) =>
+              router.push(buildUrl({ periode: "plage", to: e.target.value, date: "" }))
+            }
+          />
+          {currentPeriode === "plage" && (
             <button
               type="button"
-              onClick={() => router.push(buildUrl({ date: "all" }))}
+              onClick={() => router.push(buildUrl({ periode: "a_venir", from: "", to: "" }))}
               className="text-xs text-stone-400 hover:text-red-500"
-              title="Effacer le filtre de date"
+              title="Effacer la plage"
             >
               ✕
             </button>
@@ -110,7 +180,24 @@ export function ReservationFilters({
         </div>
       </div>
 
-      {/* Ligne 2 : salle */}
+      {/* Ligne 3 : type */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="w-16 shrink-0 text-xs font-semibold uppercase text-stone-400">
+          Type
+        </span>
+        {types.map((t) => (
+          <button
+            key={t.value}
+            type="button"
+            onClick={() => router.push(buildUrl({ type: t.value }))}
+            className={cn(chip, currentType === t.value ? active : inactive)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Ligne 4 : salle */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-16 shrink-0 text-xs font-semibold uppercase text-stone-400">
           Salle
@@ -134,7 +221,7 @@ export function ReservationFilters({
         ))}
       </div>
 
-      {/* Ligne 3 : statut */}
+      {/* Ligne 5 : statut */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-16 shrink-0 text-xs font-semibold uppercase text-stone-400">
           Statut

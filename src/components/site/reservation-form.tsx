@@ -6,10 +6,9 @@ import { toast } from "sonner";
 import {
   Briefcase,
   CalendarCheck,
-  ChevronRight,
   Loader2,
   Lock,
-  Phone,
+  PhoneCall,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,16 +26,7 @@ import { createReservation } from "@/app/actions/reservation";
 import { RESTAURANT, SERVICE_SLOTS } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
-export type SpaceOption = {
-  id: string;
-  name: string;
-  capacity: number;
-  isOutdoor: boolean;
-};
-
 type Props = {
-  spaces: SpaceOption[];
-  blockedSpaceIds: string[];
   initialMode?: "table" | "group";
 };
 
@@ -94,25 +84,21 @@ function SuccessScreen({ mode }: { mode: "table" | "group" }) {
 
 // ─────────────────────────── Formulaire table classique ────────────────
 
-function TableForm({
-  spaces,
-  blockedSpaceIds,
-  onSuccess,
-}: {
-  spaces: SpaceOption[];
-  blockedSpaceIds: string[];
-  onSuccess: () => void;
-}) {
+function TableForm({ onSuccess }: { onSuccess: () => void }) {
   const [isPending, startTransition] = useTransition();
+  const [serviceFull, setServiceFull] = useState<string | null>(null);
   const today = new Date().toISOString().split("T")[0];
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setServiceFull(null);
     const fd = new FormData(e.currentTarget);
     startTransition(async () => {
       const result = await createReservation(fd);
       if (result.success) {
         onSuccess();
+      } else if (result.code === "SERVICE_FULL") {
+        setServiceFull(result.error);
       } else {
         toast.error(result.error);
       }
@@ -121,6 +107,42 @@ function TableForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Alerte « service complet en ligne » — bien visible + incitation à appeler */}
+      {serviceFull && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 shadow-sm"
+        >
+          <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white">
+              <PhoneCall className="size-6" />
+            </div>
+            <div className="flex-1">
+              <p className="font-serif text-xl font-bold text-amber-900">
+                Réservation en ligne complète pour ce service
+              </p>
+              <p className="mt-1 text-sm font-medium text-amber-800">{serviceFull}</p>
+              <p className="mt-2 text-sm text-amber-800">
+                Les réservations en ligne sont volontairement limitées. Il reste très
+                probablement de la place&nbsp;: appelez-nous, vous avez de{" "}
+                <strong>grandes chances de pouvoir réserver</strong>.
+              </p>
+              <a
+                href={RESTAURANT.phoneHref}
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-lg font-bold text-stone-950 shadow transition-colors hover:bg-amber-400"
+              >
+                <PhoneCall className="size-5" />
+                Appeler le {RESTAURANT.phone}
+              </a>
+              <p className="mt-2 text-xs text-amber-700">
+                Vous pouvez aussi tenter une autre date ou un autre service ci-dessous.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="t-firstName">Prénom *</Label>
@@ -178,35 +200,22 @@ function TableForm({
         </div>
       </div>
 
-      {/* Espace — avec indication privatisé */}
+      {/* Préférence d'espace — la salle exacte est attribuée par l'équipe */}
       <div className="space-y-2">
         <Label htmlFor="t-space">Espace souhaité</Label>
-        <Select name="spaceId" defaultValue="any">
+        <Select name="spacePreference" defaultValue="ANY">
           <SelectTrigger id="t-space" className="w-full">
-            <SelectValue placeholder="Peu importe" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="any">Peu importe</SelectItem>
-            {spaces.map((space) => {
-              const isBlocked = blockedSpaceIds.includes(space.id);
-              return (
-                <SelectItem key={space.id} value={space.id} disabled={isBlocked}>
-                  <span className={isBlocked ? "text-stone-400" : undefined}>
-                    {space.name} — {space.isOutdoor ? "Extérieur" : "Intérieur"} (max{" "}
-                    {space.capacity} pers.)
-                    {isBlocked && " — Privatisé"}
-                  </span>
-                </SelectItem>
-              );
-            })}
+            <SelectItem value="ANY">Indifférent</SelectItem>
+            <SelectItem value="INDOOR">Intérieur</SelectItem>
+            <SelectItem value="OUTDOOR">Extérieur (terrasse)</SelectItem>
           </SelectContent>
         </Select>
-        {blockedSpaceIds.length > 0 && (
-          <p className="flex items-center gap-1 text-xs text-amber-700">
-            <Lock className="size-3" />
-            Certaines salles sont privatisées pour ce créneau.
-          </p>
-        )}
+        <p className="text-xs text-stone-400">
+          Nous vous plaçons dans la salle la plus adaptée selon votre souhait et les disponibilités.
+        </p>
       </div>
 
       <Button
@@ -231,7 +240,6 @@ function GroupForm({ onSuccess }: { onSuccess: () => void }) {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    // Force groupe : spaceId absent → null côté serveur
     startTransition(async () => {
       const result = await createReservation(fd);
       if (result.success) {
@@ -257,14 +265,19 @@ function GroupForm({ onSuccess }: { onSuccess: () => void }) {
             <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
               2
             </span>
-            Notre équipe vous recontacte pour affiner votre demande et établir
-            un devis.
+            Un mail vous est envoyé pour confirmer votre demande de réservation de groupe.
           </li>
           <li className="flex items-start gap-2">
             <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
               3
             </span>
-            Après confirmation, une salle est privatisée et votre réservation
+            Notre équipe vous recontacte pour confirmer et affiner votre demande de réservation de groupe.
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
+              4
+            </span>
+            Après confirmation, votre réservation
             est officielle.
           </li>
         </ol>
@@ -360,7 +373,7 @@ function GroupForm({ onSuccess }: { onSuccess: () => void }) {
 
 // ─────────────────────────── Composant principal ───────────────────────
 
-export function ReservationForm({ spaces, blockedSpaceIds, initialMode = "table" }: Props) {
+export function ReservationForm({ initialMode = "table" }: Props) {
   const [mode, setMode] = useState<"table" | "group">(initialMode);
   const [success, setSuccess] = useState<SuccessState>(null);
 
@@ -428,11 +441,7 @@ export function ReservationForm({ spaces, blockedSpaceIds, initialMode = "table"
           transition={{ duration: 0.2 }}
         >
           {mode === "table" ? (
-            <TableForm
-              spaces={spaces}
-              blockedSpaceIds={blockedSpaceIds}
-              onSuccess={() => setSuccess({ mode: "table" })}
-            />
+            <TableForm onSuccess={() => setSuccess({ mode: "table" })} />
           ) : (
             <GroupForm onSuccess={() => setSuccess({ mode: "group" })} />
           )}

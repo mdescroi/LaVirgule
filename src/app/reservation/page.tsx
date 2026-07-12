@@ -1,76 +1,50 @@
 import type { Metadata } from "next";
-import { Phone, Users, Briefcase, Clock, MapPin } from "lucide-react";
+import { Phone, Clock, MapPin } from "lucide-react";
 import { Reveal } from "@/components/site/reveal";
+import { ReservationForm } from "@/components/site/reservation-form";
 import { RESTAURANT } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Réservation — La Virgule",
   description:
-    "Pour réserver votre table ou organiser un événement au restaurant La Virgule à Chauray (Niort), appelez-nous directement au 05 49 33 13 70.",
+    "Réservez votre table en ligne au restaurant La Virgule à Chauray (Niort), ou organisez votre repas de groupe. Vous pouvez aussi nous appeler au 05 49 33 13 70.",
 };
 
 export default function ReservationPage() {
   return (
     <div className="bg-stone-50">
       {/* Hero bandeau */}
-      <div className="bg-stone-950 pb-20 pt-32 text-white">
+      <div className="bg-stone-950 pb-24 pt-32 text-white">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <p className="text-sm font-medium uppercase tracking-[0.35em] text-amber-400">
             La Virgule — Chauray · Niort
           </p>
           <h1 className="mt-4 font-serif text-4xl font-bold sm:text-5xl">
-            Réservation
+            Réserver une table
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-stone-300">
-            Un coup de fil suffit. Notre équipe vous accueille et prend en
-            charge votre réservation, quelle que soit la taille de votre groupe.
+            Réservez en quelques secondes ci-dessous, ou organisez votre repas
+            de groupe. Une préférence, une question ? Appelez-nous.
           </p>
 
-          {/* CTA téléphone principal */}
-          <div className="mt-10">
+          {/* CTA téléphone secondaire */}
+          <div className="mt-8">
             <a
               href={RESTAURANT.phoneHref}
-              className="inline-flex items-center gap-3 rounded-2xl bg-amber-500 px-8 py-5 text-xl font-bold text-stone-950 shadow-lg transition-colors hover:bg-amber-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-white/10"
             >
-              <Phone className="size-6" />
+              <Phone className="size-5 text-amber-400" />
               {RESTAURANT.phone}
             </a>
-            <p className="mt-4 text-sm text-stone-400">
-              Du lundi au vendredi · 12h–14h &amp; 19h–21h30 (sept. à déc.)
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Cards table & groupe */}
-      <div className="mx-auto -mt-8 max-w-2xl px-4 sm:px-6">
+      {/* Formulaire de réservation */}
+      <div className="mx-auto -mt-12 max-w-2xl px-4 sm:px-6">
         <Reveal>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex items-start gap-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
-                <Users className="size-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-stone-900">Table classique</p>
-                <p className="mt-1 text-sm leading-relaxed text-stone-500">
-                  Pour un déjeuner ou un dîner en famille, entre amis ou
-                  entre collègues — appelez-nous et nous trouverons le créneau
-                  idéal pour vous.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
-                <Briefcase className="size-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-stone-900">Groupe &amp; Événement</p>
-                <p className="mt-1 text-sm leading-relaxed text-stone-500">
-                  Séminaires, repas d&apos;affaires, anniversaires, privatisations —
-                  un seul appel pour organiser votre événement sur mesure.
-                </p>
-              </div>
-            </div>
+          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-lg sm:p-8">
+            <ReservationForm />
           </div>
         </Reveal>
       </div>

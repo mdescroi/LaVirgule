@@ -26,3 +26,6 @@ export const SERVICE_SLOTS = [
   { value: "DINNER", label: "Soir (19h – 21h30)" },
   { value: "OTHER", label: "Autre (Journée entière, événement...)" },
 ] as const;
+
+/** Couverts max réservables EN LIGNE par service (tables classiques seulement). */
+export const ONLINE_SERVICE_CAP = 20;

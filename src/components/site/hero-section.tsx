@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ChevronDown, Phone } from "lucide-react";
+import { CalendarCheck, ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { RESTAURANT } from "@/lib/config";
 
 export function HeroSection() {
   return (
@@ -64,10 +64,10 @@ export function HeroSection() {
             size="lg"
             className="bg-amber-500 px-8 text-base font-semibold text-stone-950 hover:bg-amber-400 gap-2"
           >
-            <a href={RESTAURANT.phoneHref}>
-              <Phone className="size-5" />
-              Réserver : {RESTAURANT.phone}
-            </a>
+            <Link href="/reservation">
+              <CalendarCheck className="size-5" />
+              Réserver une table
+            </Link>
           </Button>
           <Button
             asChild

@@ -29,6 +29,13 @@ enum ServiceSlot {
   OTHER
 }
 
+/// Préférence d'espace exprimée par le client (la salle exacte reste attribuée par l'équipe)
+enum SpacePreference {
+  INDOOR
+  OUTDOOR
+  ANY
+}
+
 // ─────────────────────────── MODELS ──────────────────────────
 
 /// Utilisateur administrateur (back-office)
@@ -127,6 +134,7 @@ model Reservation {
   status       ReservationStatus @default(PENDING)
   isGroup      Boolean           @default(false)
   message      String?
+  spacePreference SpacePreference? // Souhait client (Intérieur / Extérieur / Indifférent)
   spaceId      String?
   space        Space?            @relation(fields: [spaceId], references: [id], onDelete: SetNull)
   createdAt    DateTime          @default(now())

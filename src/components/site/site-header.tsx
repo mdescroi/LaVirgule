@@ -63,14 +63,18 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <a
+            href={RESTAURANT.phoneHref}
+            className="flex items-center gap-1.5 text-sm font-medium text-stone-200 transition-colors hover:text-amber-400"
+          >
+            <Phone className="size-4" />
+            {RESTAURANT.phone}
+          </a>
           <Button
             asChild
-            className="bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold gap-2"
+            className="bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold"
           >
-            <a href={RESTAURANT.phoneHref}>
-              <Phone className="size-4" />
-              {RESTAURANT.phone}
-            </a>
+            <Link href="/reservation">Réserver</Link>
           </Button>
         </nav>
 
@@ -101,13 +105,22 @@ export function SiteHeader() {
             <li>
               <Button
                 asChild
-                className="w-full bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold gap-2"
+                className="w-full bg-amber-500 text-stone-950 hover:bg-amber-400 font-semibold"
               >
-                <a href={RESTAURANT.phoneHref} onClick={() => setMobileOpen(false)}>
-                  <Phone className="size-4" />
-                  Réserver par téléphone
-                </a>
+                <Link href="/reservation" onClick={() => setMobileOpen(false)}>
+                  Réserver une table
+                </Link>
               </Button>
+            </li>
+            <li>
+              <a
+                href={RESTAURANT.phoneHref}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 py-1 text-sm font-medium text-stone-300 hover:text-amber-400"
+              >
+                <Phone className="size-4" />
+                {RESTAURANT.phone}
+              </a>
             </li>
           </ul>
         </nav>

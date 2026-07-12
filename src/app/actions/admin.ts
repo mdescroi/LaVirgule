@@ -5,6 +5,7 @@ import { unlink } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
+import { getEventUploadDir, EVENT_MEDIA_PREFIX, isSafeUploadFilename } from "@/lib/uploads";
 import { dishSchema, menuOfTheDaySchema, siteSettingsSchema, dishSubCategorySchema, eventSchema } from "@/lib/validations";
 
 type ActionResult =
@@ -331,9 +332,21 @@ export async function deleteDishSubCategory(formData: FormData): Promise<void> {
 // ─────────────────────── Événements ──────────────────────────
 
 async function deleteLocalEventImage(imageUrl: string | null) {
-  if (!imageUrl?.startsWith("/img/events/")) return;
+  if (!imageUrl) return;
+  let target: string | null = null;
+  if (imageUrl.startsWith(EVENT_MEDIA_PREFIX)) {
+    // Nouveau stockage persistant (hors public/)
+    const filename = imageUrl.slice(EVENT_MEDIA_PREFIX.length);
+    if (isSafeUploadFilename(filename)) {
+      target = path.join(getEventUploadDir(), filename);
+    }
+  } else if (imageUrl.startsWith("/img/events/")) {
+    // Ancien stockage dans public/ (images héritées commitées)
+    target = path.join(process.cwd(), "public", imageUrl);
+  }
+  if (!target) return;
   try {
-    await unlink(path.join(process.cwd(), "public", imageUrl));
+    await unlink(target);
   } catch {
     // Le fichier peut déjà être absent
   }

@@ -24,6 +24,12 @@ function slotLabel(slot: string): string {
   return SERVICE_SLOTS.find((s) => s.value === slot)?.label ?? slot;
 }
 
+function shortSlotLabel(slot: string): string {
+  if (slot === "LUNCH") return "Midi";
+  if (slot === "DINNER") return "Soir";
+  return "Autre";
+}
+
 export async function createReservation(
   formData: FormData
 ): Promise<ReservationResult> {
@@ -156,8 +162,9 @@ export async function createReservation(
     // + accusé de réception au client (la confirmation définitive viendra après validation).
     await sendGroupAcknowledgmentEmail(data);
   } else {
-    // Table confirmée : email de confirmation au client.
+    // Table confirmée : email de confirmation au client + notification au restaurant.
     await sendCustomerConfirmationEmail(data);
+    await notifyNewTableReservation(data);
   }
 
   revalidatePath("/admin/reservations");
@@ -266,6 +273,61 @@ async function sendCustomerConfirmationEmail(data: ReservationData): Promise<voi
     });
   } catch (err) {
     console.error("[reservation] Erreur envoi email confirmation client :", err);
+  }
+}
+
+/** Notification envoyée au restaurant pour chaque nouvelle réservation de table classique (auto-confirmée). */
+async function notifyNewTableReservation(data: ReservationData): Promise<void> {
+  const contactEmail = process.env.CONTACT_EMAIL;
+  const transporter = getTransporter();
+  if (!contactEmail || !transporter) {
+    console.warn("[reservation] Notification nouvelle réservation non envoyée : configuration SMTP manquante.");
+    return;
+  }
+
+  try {
+    const dateLabel = formatDateLong(data.date);
+    const prefLabel = SPACE_PREFERENCE_LABELS[data.spacePreference ?? "ANY"] ?? "Indifférent";
+    const safeMessage = (data.message ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    await transporter.sendMail({
+      from: `"La Virgule - Nouveau site" <${process.env.SMTP_USER}>`,
+      to: contactEmail,
+      replyTo: `"${data.firstName} ${data.customerName}" <${data.email}>`,
+      subject: `[Nouveau site de Max] Réservation ${data.firstName} ${data.customerName} - ${dateLabel} - ${shortSlotLabel(data.slot)} - ${data.guestCount} pers. - ${prefLabel}`,
+      text: [
+        `Nouvelle réservation de table (notification envoyée par le nouveau site de Max).`,
+        "",
+        `Nom : ${data.firstName} ${data.customerName}`,
+        `Email : ${data.email}`,
+        `Téléphone : ${data.phone}`,
+        `Date : ${dateLabel}`,
+        `Service : ${slotLabel(data.slot)}`,
+        `Couverts : ${data.guestCount}`,
+        `Espace souhaité : ${prefLabel}`,
+        data.message ? `\nMessage :\n${data.message}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      html: `
+        <table style="font-family:sans-serif;font-size:15px;color:#1c1917;max-width:600px">
+          <tr><td style="padding:24px 0 0">
+            <h2 style="margin:0 0 16px;color:#059669">Nouvelle réservation - La Virgule</h2>
+            <p><strong>Nom :</strong> ${data.firstName} ${data.customerName}</p>
+            <p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+            <p><strong>Téléphone :</strong> ${data.phone}</p>
+            <p><strong>Date :</strong> ${dateLabel}</p>
+            <p><strong>Service :</strong> ${slotLabel(data.slot)}</p>
+            <p><strong>Couverts :</strong> ${data.guestCount} personne${data.guestCount > 1 ? "s" : ""}</p>
+            <p><strong>Espace souhaité :</strong> ${prefLabel}</p>
+            ${safeMessage ? `<p style="white-space:pre-wrap"><strong>Message :</strong> ${safeMessage}</p>` : ""}
+            <hr style="border:none;border-top:1px solid #e7e5e4;margin:16px 0"/>
+            <p style="color:#78716c;font-size:13px">Notification envoyée automatiquement par le nouveau site de Max.</p>
+          </td></tr>
+        </table>`,
+    });
+  } catch (err) {
+    console.error("[reservation] Erreur envoi notification nouvelle réservation :", err);
   }
 }
 

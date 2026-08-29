@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { Reveal } from "@/components/site/reveal";
+import { EventImage } from "@/components/site/event-image";
 import { RESTAURANT } from "@/lib/config";
 import { CalendarDays, Clock, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
@@ -69,18 +70,8 @@ export default async function EvenementsPage() {
             const { day, monthYear, time } = formatDate(ev.date);
             return (
               <Reveal key={ev.id} delay={idx * 0.08}>
-                <article className="group overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-                  {ev.imageUrl && (
-                    <div className="relative h-56 w-full overflow-hidden sm:h-64">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ev.imageUrl}
-                        alt={ev.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    </div>
-                  )}
+                <article className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+                  {ev.imageUrl && <EventImage src={ev.imageUrl} alt={ev.title} />}
 
                   <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-8">
                     {/* Date encadrée */}

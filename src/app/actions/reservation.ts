@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { reservationSchema } from "@/lib/validations";
-import { RESTAURANT, SERVICE_SLOTS, ONLINE_SERVICE_CAP, RESERVATION_WINDOW_DAYS } from "@/lib/config";
+import {
+  RESTAURANT,
+  SERVICE_SLOTS,
+  ONLINE_SERVICE_CAP,
+  RESERVATION_WINDOW_DAYS,
+  RESERVATION_MIN_LEAD_DAYS,
+} from "@/lib/config";
 import { isServiceOpen, weekdayLabel } from "@/lib/opening-schedule";
 
 export type ReservationResult =
@@ -71,6 +77,16 @@ export async function createReservation(
   // ── Réservation de table classique : fenêtre de réservation + jours/services fermés.
   // Les groupes (devis) restent toujours possibles, y compris hors planning ou au-delà de l'horizon.
   if (!isGroup) {
+    const minDate = new Date();
+    minDate.setUTCHours(0, 0, 0, 0);
+    minDate.setUTCDate(minDate.getUTCDate() + RESERVATION_MIN_LEAD_DAYS);
+    if (dayStart < minDate) {
+      return {
+        success: false,
+        error: `Les réservations en ligne doivent être faites au moins ${RESERVATION_MIN_LEAD_DAYS} jours à l'avance. Pour une réservation plus rapprochée, appelez-nous au ${RESTAURANT.phone}.`,
+      };
+    }
+
     const maxDate = new Date();
     maxDate.setUTCHours(0, 0, 0, 0);
     maxDate.setUTCDate(maxDate.getUTCDate() + RESERVATION_WINDOW_DAYS);

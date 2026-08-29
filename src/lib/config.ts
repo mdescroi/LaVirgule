@@ -32,3 +32,6 @@ export const ONLINE_SERVICE_CAP = 20;
 
 /** Horizon de réservation EN LIGNE pour les tables classiques (en jours, calendaires). Les demandes de groupe ne sont pas concernées. */
 export const RESERVATION_WINDOW_DAYS = 21;
+
+/** Délai minimum avant le service pour une réservation EN LIGNE (en jours, calendaires) : pas de réservation le jour même ni pour le lendemain. Les demandes de groupe ne sont pas concernées. */
+export const RESERVATION_MIN_LEAD_DAYS = 2;

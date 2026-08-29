@@ -108,7 +108,7 @@ export function EditReservationDialog({
               <div>
                 <p className="font-semibold">Groupe en attente de validation</p>
                 <p className="text-xs mt-0.5">
-                  Assignez une salle avant de passer le statut à « Confirmée » — cela privatisera
+                  Assignez une salle avant de passer le statut à « Confirmée » - cela privatisera
                   automatiquement la salle pour ce créneau.
                 </p>
               </div>
@@ -225,7 +225,7 @@ export function EditReservationDialog({
                 <SelectItem value="any">Peu importe</SelectItem>
                 {spaces.map((space) => (
                   <SelectItem key={space.id} value={space.id}>
-                    {space.name} — {space.isOutdoor ? "Extérieur" : "Intérieur"} (max{" "}
+                    {space.name} - {space.isOutdoor ? "Extérieur" : "Intérieur"} (max{" "}
                     {space.capacity})
                   </SelectItem>
                 ))}

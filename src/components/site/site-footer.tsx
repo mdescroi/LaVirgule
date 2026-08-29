@@ -138,7 +138,7 @@ export function SiteFooter({ hoursLine1, hoursLine2, hoursLine3 }: SiteFooterPro
       <div className="border-t border-stone-800">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-stone-500 sm:flex-row sm:px-6 lg:px-8">
           <p suppressHydrationWarning>
-            © {new Date().getFullYear()} {RESTAURANT.name} — Tous droits réservés.
+            © {new Date().getFullYear()} {RESTAURANT.name} - Tous droits réservés.
           </p>
           <Link href="/admin" className="transition-colors hover:text-stone-300">
             Espace administration

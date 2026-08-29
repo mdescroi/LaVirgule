@@ -187,7 +187,7 @@ export function AddReservationDialog({ spaces }: { spaces: SpaceOption[] }) {
           <div className="space-y-2">
             <Label htmlFor="ar-space">
               {isGroup ? "Salle à privatiser" : "Espace"}
-              {isGroup && <span className="ml-1.5 text-xs font-normal text-stone-400">(optionnel — à confirmer après devis)</span>}
+              {isGroup && <span className="ml-1.5 text-xs font-normal text-stone-400">(optionnel - à confirmer après devis)</span>}
             </Label>
             <Select name="spaceId" defaultValue="any">
               <SelectTrigger id="ar-space" className="w-full">
@@ -197,7 +197,7 @@ export function AddReservationDialog({ spaces }: { spaces: SpaceOption[] }) {
                 <SelectItem value="any">{isGroup ? "À définir" : "Peu importe"}</SelectItem>
                 {spaces.map((space) => (
                   <SelectItem key={space.id} value={space.id}>
-                    {space.name} — {space.isOutdoor ? "Ext." : "Int."} (max {space.capacity})
+                    {space.name} - {space.isOutdoor ? "Ext." : "Int."} (max {space.capacity})
                   </SelectItem>
                 ))}
               </SelectContent>

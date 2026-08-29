@@ -34,7 +34,7 @@ export function HoursForm({ settings }: { settings: HoursData }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="hoursLine1">
-          Ligne 1 — Période principale *
+          Ligne 1 - Période principale *
         </Label>
         <Textarea
           id="hoursLine1"
@@ -52,7 +52,7 @@ export function HoursForm({ settings }: { settings: HoursData }) {
 
       <div className="space-y-2">
         <Label htmlFor="hoursLine2">
-          Ligne 2 — Note complémentaire (groupes, exceptions…)
+          Ligne 2 - Note complémentaire (groupes, exceptions…)
         </Label>
         <Textarea
           id="hoursLine2"
@@ -63,13 +63,13 @@ export function HoursForm({ settings }: { settings: HoursData }) {
           placeholder="Du Lundi au Vendredi"
         />
         <p className="text-xs text-stone-400">
-          Optionnel — pour préciser une règle particulière (groupes, fermetures, etc.).
+          Optionnel - pour préciser une règle particulière (groupes, fermetures, etc.).
         </p>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="hoursLine3">
-          Ligne 3 — Deuxième période de l&apos;année
+          Ligne 3 - Deuxième période de l&apos;année
         </Label>
         <Textarea
           id="hoursLine3"
@@ -77,10 +77,10 @@ export function HoursForm({ settings }: { settings: HoursData }) {
           rows={2}
           maxLength={300}
           defaultValue={settings.hoursLine3}
-          placeholder="Ex : De septembre à décembre : midi 12h–14h · soir 19h–21h30."
+          placeholder="Ex : De septembre à décembre : midi 12h–14h · soir 19h–21h."
         />
         <p className="text-xs text-stone-400">
-          Optionnel — laissez vide si vous n&apos;avez qu&apos;une seule période.
+          Optionnel - laissez vide si vous n&apos;avez qu&apos;une seule période.
         </p>
       </div>
 

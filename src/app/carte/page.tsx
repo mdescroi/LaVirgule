@@ -46,7 +46,7 @@ export default async function CartePage() {
             La Carte
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-stone-400">
-            Cuisine traditionnelle et généreuse — tous nos plats sont préparés sur place.
+            Cuisine traditionnelle et généreuse - tous nos plats sont préparés sur place.
           </p>
         </Reveal>
       </div>

@@ -83,7 +83,7 @@ export async function MenuSection() {
           </Reveal>
         ) : (
           <Reveal delay={0.15} className="mt-12 text-center text-stone-500">
-            <p>Le menu du jour sera bientôt disponible — appelez-nous pour le connaître !</p>
+            <p>Le menu du jour sera bientôt disponible - appelez-nous pour le connaître !</p>
           </Reveal>
         )}
 

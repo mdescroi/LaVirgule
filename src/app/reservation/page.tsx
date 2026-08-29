@@ -5,7 +5,7 @@ import { ReservationForm } from "@/components/site/reservation-form";
 import { RESTAURANT } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Réservation — La Virgule",
+  title: "Réservation - La Virgule",
   description:
     "Réservez votre table en ligne au restaurant La Virgule à Chauray (Niort), ou organisez votre repas de groupe. Vous pouvez aussi nous appeler au 05 49 33 13 70.",
 };
@@ -17,7 +17,7 @@ export default function ReservationPage() {
       <div className="bg-stone-950 pb-24 pt-32 text-white">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <p className="text-sm font-medium uppercase tracking-[0.35em] text-amber-400">
-            La Virgule — Chauray · Niort
+            La Virgule - Chauray · Niort
           </p>
           <h1 className="mt-4 font-serif text-4xl font-bold sm:text-5xl">
             Réserver une table
@@ -98,7 +98,7 @@ export default function ReservationPage() {
             >
               {RESTAURANT.email}
             </a>
-            {" "}— nous vous répondrons dans les meilleurs délais.
+            {" "}- nous vous répondrons dans les meilleurs délais.
           </p>
         </Reveal>
       </div>

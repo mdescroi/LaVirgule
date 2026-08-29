@@ -260,7 +260,7 @@ async function sendCustomerConfirmationEmail(data: ReservationData): Promise<voi
             <hr style="border:none;border-top:1px solid #e7e5e4;margin:16px 0"/>
             <p style="margin:4px 0"><strong>${RESTAURANT.name}</strong><br/>${RESTAURANT.fullAddress}</p>
             <p style="margin:4px 0">Pour modifier ou annuler, appelez-nous au <a href="${RESTAURANT.phoneHref}" style="color:#d97706;font-weight:600">${RESTAURANT.phone}</a>.</p>
-            <p style="color:#78716c;font-size:13px;margin-top:16px">À très bientôt — l'équipe de ${RESTAURANT.name}.</p>
+            <p style="color:#78716c;font-size:13px;margin-top:16px">À très bientôt - l'équipe de ${RESTAURANT.name}.</p>
           </td></tr>
         </table>`,
     });
@@ -284,7 +284,7 @@ async function sendGroupAcknowledgmentEmail(data: ReservationData): Promise<void
       from: `"${RESTAURANT.name}" <${process.env.SMTP_USER}>`,
       to: data.email,
       replyTo: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
-      subject: `Nous avons bien reçu votre demande de groupe — ${RESTAURANT.name}`,
+      subject: `Nous avons bien reçu votre demande de groupe - ${RESTAURANT.name}`,
       text: [
         `Bonjour ${data.firstName},`,
         "",
@@ -316,7 +316,7 @@ async function sendGroupAcknowledgmentEmail(data: ReservationData): Promise<void
             <p>Notre équipe va l'étudier et vous recontacter rapidement pour établir le devis et confirmer l'organisation. À ce stade, <strong>aucune salle n'est encore réservée</strong>&nbsp;: tout se confirme après notre échange.</p>
             <hr style="border:none;border-top:1px solid #e7e5e4;margin:16px 0"/>
             <p style="margin:4px 0">Une question&nbsp;? Appelez-nous au <a href="${RESTAURANT.phoneHref}" style="color:#d97706;font-weight:600">${RESTAURANT.phone}</a>.</p>
-            <p style="color:#78716c;font-size:13px;margin-top:16px">À très bientôt — l'équipe de ${RESTAURANT.name}.</p>
+            <p style="color:#78716c;font-size:13px;margin-top:16px">À très bientôt - l'équipe de ${RESTAURANT.name}.</p>
           </td></tr>
         </table>`,
     });
@@ -376,7 +376,7 @@ export async function confirmGroupReservation(
   if (!reservation.email) {
     return {
       success: true,
-      warning: "Réservation confirmée, mais aucun email client — confirmation non envoyée.",
+      warning: "Réservation confirmée, mais aucun email client - confirmation non envoyée.",
     };
   }
 
@@ -402,7 +402,7 @@ export async function confirmGroupReservation(
             <h2 style="margin:0 0 12px;color:#059669">Réservation de groupe confirmée ✓</h2>
             <div style="white-space:pre-wrap">${safeBody}</div>
             <hr style="border:none;border-top:1px solid #e7e5e4;margin:16px 0"/>
-            <p style="color:#78716c;font-size:13px;margin:0">${RESTAURANT.name} — ${RESTAURANT.fullAddress} — ${RESTAURANT.phone}</p>
+            <p style="color:#78716c;font-size:13px;margin:0">${RESTAURANT.name} - ${RESTAURANT.fullAddress} - ${RESTAURANT.phone}</p>
           </td></tr>
         </table>`,
     });
@@ -431,10 +431,10 @@ async function notifyGroupReservation(data: ReservationData): Promise<void> {
     const safeMessage = (data.message ?? "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     await transporter.sendMail({
-      from: `"La Virgule — Réservation groupe" <${process.env.SMTP_USER}>`,
+      from: `"La Virgule - Réservation groupe" <${process.env.SMTP_USER}>`,
       to: contactEmail,
       replyTo: `"${data.firstName} ${data.customerName}" <${data.email}>`,
-      subject: `[Réservation Groupe] ${data.guestCount} pers. — ${dateLabel}`,
+      subject: `[Réservation Groupe] ${data.guestCount} pers. - ${dateLabel}`,
       text: [
         `Nouvelle demande de réservation de groupe (${data.guestCount} personnes).`,
         "",
@@ -453,7 +453,7 @@ async function notifyGroupReservation(data: ReservationData): Promise<void> {
       html: `
         <table style="font-family:sans-serif;font-size:15px;color:#1c1917;max-width:600px">
           <tr><td style="padding:24px 0 0">
-            <h2 style="margin:0 0 16px;color:#d97706">Nouvelle réservation de groupe — La Virgule</h2>
+            <h2 style="margin:0 0 16px;color:#d97706">Nouvelle réservation de groupe - La Virgule</h2>
             <p><strong>Nom :</strong> ${data.firstName} ${data.customerName}</p>
             <p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>
             <p><strong>Téléphone :</strong> ${data.phone}</p>

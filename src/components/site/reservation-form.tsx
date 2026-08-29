@@ -56,7 +56,7 @@ function SuccessScreen({ mode }: { mode: "table" | "group" }) {
             confirmer l&apos;organisation.
           </p>
           <p className="mt-3 text-sm text-amber-700 font-medium">
-            Aucune salle n&apos;est réservée à ce stade — tout se confirme après
+            Aucune salle n&apos;est réservée à ce stade - tout se confirme après
             notre appel.
           </p>
         </>
@@ -110,7 +110,7 @@ function TableForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Alerte « service complet en ligne » — bien visible + incitation à appeler */}
+      {/* Alerte « service complet en ligne » - bien visible + incitation à appeler */}
       {serviceFull && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
@@ -204,7 +204,7 @@ function TableForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       </div>
 
-      {/* Préférence d'espace — la salle exacte est attribuée par l'équipe */}
+      {/* Préférence d'espace - la salle exacte est attribuée par l'équipe */}
       <div className="space-y-2">
         <Label htmlFor="t-space">Espace souhaité</Label>
         <Select name="spacePreference" defaultValue="ANY">

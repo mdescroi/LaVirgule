@@ -11,7 +11,7 @@ type RevealProps = {
 
 /**
  * Wrapper d'animation au scroll (fade + slide-up).
- * Implémenté avec IntersectionObserver + CSS — sans framer-motion.
+ * Implémenté avec IntersectionObserver + CSS - sans framer-motion.
  */
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);

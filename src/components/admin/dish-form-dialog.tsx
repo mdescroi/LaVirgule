@@ -140,7 +140,7 @@ export function DishFormDialog({ dish, subCategories = [] }: { dish?: DishData; 
                   <SelectValue placeholder="Aucune" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">— Aucune —</SelectItem>
+                  <SelectItem value="none">- Aucune -</SelectItem>
                   {subCategories
                     .filter((sc) => sc.parentCategory === "MAIN")
                     .map((sc) => (

@@ -59,7 +59,7 @@ const SERVICE_META: Record<
   },
   DINNER: {
     label: "Soir",
-    time: "19h – 21h30",
+    time: "19h – 21h",
     Icon: Moon,
     headerClass: "bg-indigo-50 border-indigo-200",
     iconClass: "bg-indigo-100 text-indigo-700",
@@ -170,18 +170,18 @@ export default async function AdminReservationsPage({
     case "today":
       where.date = { gte: todayStart, lt: addUTCDays(todayStart, 1) };
       singleDay = true;
-      headerLabel = `Aujourd'hui — ${fmtLong(todayStart)}`;
+      headerLabel = `Aujourd'hui - ${fmtLong(todayStart)}`;
       break;
     case "tomorrow": {
       const t = addUTCDays(todayStart, 1);
       where.date = { gte: t, lt: addUTCDays(t, 1) };
       singleDay = true;
-      headerLabel = `Demain — ${fmtLong(t)}`;
+      headerLabel = `Demain - ${fmtLong(t)}`;
       break;
     }
     case "semaine":
       where.date = { gte: todayStart, lt: addUTCDays(todayStart, 7) };
-      headerLabel = `Cette semaine — du ${fmtShort(todayStart)} au ${fmtShort(
+      headerLabel = `Cette semaine - du ${fmtShort(todayStart)} au ${fmtShort(
         addUTCDays(todayStart, 6)
       )}`;
       break;
@@ -656,7 +656,7 @@ export default async function AdminReservationsPage({
         </div>
       </div>
 
-      {/* Bandeau « à valider » — demandes de groupe en attente */}
+      {/* Bandeau « à valider » - demandes de groupe en attente */}
       {pendingGroups.length > 0 && (
         <div className="rounded-xl border-2 border-amber-300 bg-amber-50 p-4">
           <div className="mb-3 flex items-center gap-2">

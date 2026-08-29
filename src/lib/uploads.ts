@@ -1,7 +1,7 @@
 import path from "path";
 
 /**
- * Répertoire PERSISTANT des images d'événements — délibérément HORS du dossier
+ * Répertoire PERSISTANT des images d'événements - délibérément HORS du dossier
  * de build (`public/`, `.next/`) pour survivre à `git pull` + `npm run build` +
  * redémarrage PM2, et pour ne pas avoir à committer les binaires dans git.
  *

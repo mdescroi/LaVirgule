@@ -1,10 +1,10 @@
 export const RESTAURANT = {
   name: "La Virgule",
-  tagline: "Restaurant traditionnel à Niort — Chauray",
+  tagline: "Restaurant traditionnel à Niort - Chauray",
   address: "83, rue André Bellot",
   city: "Chaban / Chauray",
   zip: "79180",
-  fullAddress: "83, rue André Bellot, 79180 Chauray (Chaban) — Niort",
+  fullAddress: "83, rue André Bellot, 79180 Chauray (Chaban) - Niort",
   phone: "05 49 33 13 70",
   phoneHref: "tel:+33549331370",
   email: "contact@restaurantlavirgule.fr",
@@ -16,14 +16,14 @@ export const RESTAURANT = {
     janToAugGroups:
       "Possibilité d'accueillir des groupes le soir à partir de 15 personnes durant cette même période.",
     sepToDec:
-      "De septembre à décembre : ouvert le midi et le soir, de 12h à 14h (service du midi) et de 19h à 21h30 (service du soir).",
+      "De septembre à décembre : ouvert le midi et le soir, de 12h à 14h (service du midi) et de 19h à 21h (service du soir).",
   },
   groupThreshold: 12,
 } as const;
 
 export const SERVICE_SLOTS = [
   { value: "LUNCH", label: "Midi (12h – 14h)" },
-  { value: "DINNER", label: "Soir (19h – 21h30)" },
+  { value: "DINNER", label: "Soir (19h – 21h)" },
   { value: "OTHER", label: "Autre (Journée entière, événement...)" },
 ] as const;
 

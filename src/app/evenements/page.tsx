@@ -10,7 +10,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Événements",
   description:
-    "Retrouvez les prochains événements et soirées spéciales du restaurant La Virgule à Chauray — Niort.",
+    "Retrouvez les prochains événements et soirées spéciales du restaurant La Virgule à Chauray - Niort.",
 };
 
 function formatDate(date: Date): { day: string; monthYear: string; time: string } {

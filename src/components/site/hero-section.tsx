@@ -26,7 +26,7 @@ export function HeroSection() {
           transition={{ duration: 0.7 }}
           className="text-sm font-medium uppercase tracking-[0.35em] text-amber-400"
         >
-          Restaurant — Niort · Chauray
+          Restaurant - Niort · Chauray
         </motion.p>
 
         <motion.h1
@@ -50,7 +50,7 @@ export function HeroSection() {
         >
           Cuisine traditionnelle et généreuse au cœur de la zone de Chaban.
           Déjeuners gourmands, repas d&apos;affaires, séminaires et réceptions de
-          groupes — quatre espaces pour tous vos moments.
+          groupes - quatre espaces pour tous vos moments.
         </motion.p>
 
         <motion.div

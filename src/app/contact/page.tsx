@@ -9,7 +9,7 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Contact & Accès",
-  description: `Contactez le restaurant La Virgule : ${RESTAURANT.fullAddress} — ${RESTAURANT.phone} — ${RESTAURANT.email}`,
+  description: `Contactez le restaurant La Virgule : ${RESTAURANT.fullAddress} - ${RESTAURANT.phone} - ${RESTAURANT.email}`,
 };
 
 export default async function ContactPage() {

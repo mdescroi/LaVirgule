@@ -57,7 +57,7 @@ export async function sendContactMessage(
     });
 
     await transporter.sendMail({
-      from: `"La Virgule — Formulaire" <${process.env.SMTP_USER}>`,
+      from: `"La Virgule - Formulaire" <${process.env.SMTP_USER}>`,
       to: contactEmail,
       replyTo: `"${name}" <${email}>`,
       subject: `[Contact] ${subject}`,
@@ -74,7 +74,7 @@ export async function sendContactMessage(
       html: `
         <table style="font-family:sans-serif;font-size:15px;color:#1c1917;max-width:600px">
           <tr><td style="padding:24px 0 0">
-            <h2 style="margin:0 0 16px;color:#d97706">Nouveau message — La Virgule</h2>
+            <h2 style="margin:0 0 16px;color:#d97706">Nouveau message - La Virgule</h2>
             <p><strong>Nom :</strong> ${name}</p>
             <p><strong>Email :</strong> <a href="mailto:${email}">${email}</a></p>
             ${phone ? `<p><strong>Téléphone :</strong> ${phone}</p>` : ""}

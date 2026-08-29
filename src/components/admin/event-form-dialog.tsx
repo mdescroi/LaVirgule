@@ -227,7 +227,7 @@ export function EventFormDialog({ event }: { event?: EventRow }) {
                 <span className="text-sm font-medium">
                   {uploading ? "Envoi en cours…" : "Glissez une image ici ou cliquez"}
                 </span>
-                <span className="text-xs">JPG, PNG, WEBP — max 5 Mo</span>
+                <span className="text-xs">JPG, PNG, WEBP - max 5 Mo</span>
               </div>
             )}
             <input

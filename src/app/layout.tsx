@@ -19,7 +19,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: `${RESTAURANT.name} — Restaurant à Niort / Chauray`,
+    default: `${RESTAURANT.name} - Restaurant à Niort / Chauray`,
     template: `%s | ${RESTAURANT.name}`,
   },
   description:
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "repas de groupe",
   ],
   openGraph: {
-    title: `${RESTAURANT.name} — Restaurant à Niort / Chauray`,
+    title: `${RESTAURANT.name} - Restaurant à Niort / Chauray`,
     description:
       "Cuisine traditionnelle, menu du jour, accueil de groupes et séminaires à Chauray (Niort).",
     locale: "fr_FR",

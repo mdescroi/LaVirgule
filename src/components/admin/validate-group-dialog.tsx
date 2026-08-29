@@ -41,7 +41,7 @@ function dateLabel(dateStr: string): string {
 }
 
 function defaultSubject(): string {
-  return `Confirmation de votre réservation de groupe — ${RESTAURANT.name}`;
+  return `Confirmation de votre réservation de groupe - ${RESTAURANT.name}`;
 }
 
 function defaultBody(r: GroupReservationSummary): string {
@@ -131,7 +131,7 @@ export function ValidateGroupDialog({
               et envoie l&apos;email ci-dessous au client.
             </p>
             <p className="mt-1">
-              <strong>Confirmer sans email</strong> met seulement à jour le statut en base — utile
+              <strong>Confirmer sans email</strong> met seulement à jour le statut en base - utile
               pour une réservation que vous avez saisie vous-même.
             </p>
           </div>

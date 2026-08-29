@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createReservation } from "@/app/actions/reservation";
-import { RESTAURANT, SERVICE_SLOTS } from "@/lib/config";
+import { RESTAURANT, SERVICE_SLOTS, RESERVATION_WINDOW_DAYS } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -88,6 +88,9 @@ function TableForm({ onSuccess }: { onSuccess: () => void }) {
   const [isPending, startTransition] = useTransition();
   const [serviceFull, setServiceFull] = useState<string | null>(null);
   const today = new Date().toISOString().split("T")[0];
+  const maxDate = new Date(Date.now() + RESERVATION_WINDOW_DAYS * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -168,7 +171,8 @@ function TableForm({ onSuccess }: { onSuccess: () => void }) {
       <div className="grid gap-5 sm:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="t-date">Date *</Label>
-          <Input id="t-date" name="date" type="date" required min={today} />
+          <Input id="t-date" name="date" type="date" required min={today} max={maxDate} />
+          <p className="text-xs text-stone-400">Jusqu&apos;à {RESERVATION_WINDOW_DAYS} jours à l&apos;avance.</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="t-slot">Service *</Label>

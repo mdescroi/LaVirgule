@@ -29,3 +29,6 @@ export const SERVICE_SLOTS = [
 
 /** Couverts max réservables EN LIGNE par service (tables classiques seulement). */
 export const ONLINE_SERVICE_CAP = 20;
+
+/** Horizon de réservation EN LIGNE pour les tables classiques (en jours, calendaires). Les demandes de groupe ne sont pas concernées. */
+export const RESERVATION_WINDOW_DAYS = 21;

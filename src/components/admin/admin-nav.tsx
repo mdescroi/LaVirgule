@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Clock, LayoutDashboard, LogOut, UtensilsCrossed, PartyPopper } from "lucide-react";
+import { CalendarClock, CalendarDays, Clock, LayoutDashboard, LogOut, UtensilsCrossed, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/admin/menu", label: "Carte & Menu", icon: UtensilsCrossed },
   { href: "/admin/horaires", label: "Horaires", icon: Clock },
+  { href: "/admin/planning-ouverture", label: "Planning d'ouverture", icon: CalendarClock },
   { href: "/admin/evenements", label: "Événements", icon: PartyPopper },
   { href: "/admin/reservations", label: "Réservations", icon: CalendarDays },
 ];

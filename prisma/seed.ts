@@ -154,6 +154,16 @@ async function main() {
   });
   console.log("✔ Paramètres du site créés");
 
+  // ── Planning d'ouverture hebdomadaire (par défaut : ouvert tous les jours) ──
+  for (let dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
+    await prisma.weeklyOpeningHours.upsert({
+      where: { dayOfWeek },
+      update: {},
+      create: { dayOfWeek, lunchOpen: true, dinnerOpen: true },
+    });
+  }
+  console.log("✔ Planning d'ouverture créé");
+
   // ── Menu du jour ───────────────────────────────────────
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);

@@ -296,6 +296,26 @@ export async function updateSiteSettings(formData: FormData): Promise<ActionResu
   return { success: true };
 }
 
+// ─────────────────────── Planning d'ouverture ────────────────
+
+export async function updateOpeningSchedule(formData: FormData): Promise<ActionResult> {
+  await assertAdmin();
+
+  for (let dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
+    const lunchOpen = formData.get(`lunch_${dayOfWeek}`) === "on";
+    const dinnerOpen = formData.get(`dinner_${dayOfWeek}`) === "on";
+    await prisma.weeklyOpeningHours.upsert({
+      where: { dayOfWeek },
+      update: { lunchOpen, dinnerOpen },
+      create: { dayOfWeek, lunchOpen, dinnerOpen },
+    });
+  }
+
+  revalidatePath("/admin/planning-ouverture");
+  revalidatePath("/reservation");
+  return { success: true };
+}
+
 // ─────────────────────── Sous-catégories de plats ────────────
 
 export async function createDishSubCategory(formData: FormData): Promise<void> {

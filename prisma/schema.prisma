@@ -162,6 +162,18 @@ model Event {
   @@map("events")
 }
 
+/// Planning d'ouverture hebdomadaire par défaut (grille récurrente midi/soir par jour de semaine)
+/// dayOfWeek suit la convention JS Date#getUTCDay() : 0 = dimanche ... 6 = samedi
+model WeeklyOpeningHours {
+  id         String   @id @default(cuid())
+  dayOfWeek  Int      @unique
+  lunchOpen  Boolean  @default(true)
+  dinnerOpen Boolean  @default(true)
+  updatedAt  DateTime @updatedAt
+
+  @@map("weekly_opening_hours")
+}
+
 /// Message envoyé via le formulaire de contact
 model ContactMessage {
   id        String   @id @default(cuid())

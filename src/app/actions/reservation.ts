@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { reservationSchema } from "@/lib/validations";
-import { RESTAURANT, SERVICE_SLOTS, ONLINE_SERVICE_CAP } from "@/lib/config";
+import { RESTAURANT, SERVICE_SLOTS, ONLINE_SERVICE_CAP, RESERVATION_WINDOW_DAYS } from "@/lib/config";
+import { isServiceOpen, weekdayLabel } from "@/lib/opening-schedule";
 
 export type ReservationResult =
   | { success: true; isGroup: boolean }
@@ -60,6 +61,30 @@ export async function createReservation(
   dayStart.setUTCHours(0, 0, 0, 0);
   const nextDay = new Date(dayStart);
   nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+
+  // ── Réservation de table classique : fenêtre de réservation + jours/services fermés.
+  // Les groupes (devis) restent toujours possibles, y compris hors planning ou au-delà de l'horizon.
+  if (!isGroup) {
+    const maxDate = new Date();
+    maxDate.setUTCHours(0, 0, 0, 0);
+    maxDate.setUTCDate(maxDate.getUTCDate() + RESERVATION_WINDOW_DAYS);
+    if (dayStart > maxDate) {
+      return {
+        success: false,
+        error: `Les réservations en ligne sont ouvertes jusqu'à ${RESERVATION_WINDOW_DAYS} jours à l'avance. Pour une date plus lointaine, appelez-nous au ${RESTAURANT.phone}.`,
+      };
+    }
+
+    if (data.slot === "LUNCH" || data.slot === "DINNER") {
+      const open = await isServiceOpen(dayStart, data.slot);
+      if (!open) {
+        return {
+          success: false,
+          error: `Nous sommes fermés le ${weekdayLabel(dayStart.getUTCDay())} ${data.slot === "LUNCH" ? "midi" : "soir"}. Merci de choisir une autre date ou de nous appeler au ${RESTAURANT.phone}.`,
+        };
+      }
+    }
+  }
 
   // ── Plafond : 20 couverts max par service, uniquement pour les tables classiques.
   // Les groupes (devis) ne sont pas comptés et jamais bloqués par ce plafond.

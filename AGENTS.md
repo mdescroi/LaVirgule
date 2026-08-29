@@ -10,7 +10,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Description du projet
 
-Site web complet pour **La Virgule**, restaurant à Niort/Chauray (France). Application Next.js full-stack avec back-office d'administration et module de gestion du personnel.
+Site web complet pour **La Virgule**, restaurant à Niort/Chauray (France). Application Next.js full-stack avec back-office d'administration (carte, événements, horaires, planning d'ouverture, réservations).
 
 ## Stack technique
 
@@ -23,11 +23,10 @@ Site web complet pour **La Virgule**, restaurant à Niort/Chauray (France). Appl
 | ORM | **Prisma 6** (PAS la v7 — API incompatible) |
 | Base de données | PostgreSQL 16 (Docker en local, PostgreSQL natif en prod) |
 | Auth admin | Cookie HMAC-SHA256 maison (`src/lib/auth.ts`) |
-| Auth employé | Cookie HMAC-SHA256 séparé (`src/lib/employee-auth.ts`) |
 | Animations | Framer Motion |
 | Validation | Zod 4 (utiliser `.issues` pas `.errors`) |
 | Notifications | Sonner (toasts) |
-| Exports | `xlsx` (Excel), `window.print()` (PDF) |
+| Emails | Nodemailer (SMTP via `.env`, dégradation silencieuse si absent) |
 
 ## Architecture des dossiers
 
@@ -38,53 +37,36 @@ src/
     layout.tsx                 ← Layout racine (chargement siteSettings)
     globals.css
     actions/                   ← Server Actions ("use server")
-      auth.ts                  ← login (email/mdp) + loginWithPin (PIN employé) + logout
-      badging.ts               ← Pointeuse : startShift, endShift, startBreak, endBreak
-      personnel.ts             ← CRUD employés (createEmployee, updateEmployee, resetPin, delete)
-      planning.ts              ← Planning : upsertPlannedShift, getWeekPlanning, getMonthlyShifts
-      admin.ts                 ← Actions admin (menu, événements, horaires, réservations)
+      auth.ts                  ← login (email/mdp) + logout
+      admin.ts                 ← Actions admin (menu, événements, horaires, planning d'ouverture, réservations)
       reservation.ts           ← Soumission réservation client
       contact.ts               ← Formulaire de contact
     admin/
       layout.tsx               ← Redirige vers /admin/login si non authentifié
-      login/page.tsx           ← Connexion admin (email/mdp) + employé (PIN)
-      (dashboard)/             ← Route group protégé par requireAnyAdminAccess()
+      login/page.tsx           ← Connexion admin (email/mdp)
+      (dashboard)/             ← Route group protégé par requireAdmin()
         layout.tsx
         page.tsx               ← Tableau de bord
         menu/                  ← Gestion carte et menu du jour
-        horaires/              ← Horaires du restaurant
+        horaires/              ← Horaires affichés sur le site (texte libre)
+        planning-ouverture/    ← Planning d'ouverture midi/soir par jour de semaine
         evenements/            ← Gestion événements
         reservations/          ← Gestion réservations
-        personnel/             ← Équipe + planning + historique heures
-    badging/                   ← Pointeuse employé (hors auth admin)
-      page.tsx                 ← Saisie code PIN
-      shift/page.tsx           ← Actions shift (start/pause/end)
     api/
-      export/monthly/route.ts  ← Export Excel pointages (GET ?year=&month=)
       upload/                  ← Upload images
     carte/, contact/, espaces/, evenements/, horaires/, reservation/
   components/
     admin/                     ← Composants du back-office
-      admin-nav.tsx            ← Nav latérale RBAC (masquée à l'impression)
-      personnel-tabs.tsx       ← Onglets Équipe / Planning / Historique
-      weekly-planner.tsx       ← Calendrier hebdomadaire planning
-      monthly-hours.tsx        ← Suivi heures mensuel + export
-      planned-shift-dialog.tsx ← Dialog édition shift planifié
-      employee-form-dialog.tsx ← Dialog création/édition employé
-      employee-row.tsx         ← Ligne table employé
-      personnel-manager.tsx    ← Tableau CRUD employés
+      admin-nav.tsx            ← Nav latérale de l'admin
+      opening-schedule-form.tsx ← Formulaire planning d'ouverture (grille jour × service)
       ...
-    badging/
-      pin-pad.tsx              ← Pavé numérique tactile
-      shift-actions.tsx        ← Boutons état shift (dynamiques)
     site/                      ← Composants pages publiques
     ui/                        ← Composants shadcn/ui
   lib/
     auth.ts                    ← Session admin (cookie HMAC, requireAdmin)
-    employee-auth.ts           ← Session employé (cookie HMAC, getPinIndex, requireEmployee)
-    permissions.ts             ← RBAC : requirePermission, requireAnyAdminAccess, getEffectiveAccess
     prisma.ts                  ← Instance PrismaClient singleton
-    config.ts                  ← Constantes restaurant (RESTAURANT, DEFAULT_HOURS)
+    config.ts                  ← Constantes restaurant (RESTAURANT, SERVICE_SLOTS, ONLINE_SERVICE_CAP, RESERVATION_WINDOW_DAYS)
+    opening-schedule.ts        ← Planning d'ouverture : lecture + isServiceOpen(date, slot)
     validations.ts             ← Schémas Zod partagés
     utils.ts                   ← cn() et helpers
     spaces.ts                  ← Logique espaces
@@ -97,31 +79,24 @@ prisma/
 ## Modèles Prisma (résumé)
 
 - `User` — Admin (email + passwordHash, bcrypt)
-- `Employee` — Employé (pinHash + pinIndex HMAC pour lookup O(1), permissions[], isActive)
-- `Shift` — Shift réel pointé (startTime, endTime?, breaks[])
-- `Break` — Pause dans un shift
-- `PlannedShift` — Shift planifié par le manager (date @db.Date, startTime/endTime "HH:MM")
 - `SiteSettings` — Singleton paramètres site (horaires affichés)
+- `WeeklyOpeningHours` — Planning d'ouverture par défaut (dayOfWeek 0-6, lunchOpen/dinnerOpen) : contrôle les réservations de table en ligne
 - `Space` — Salle du restaurant
 - `Reservation` — Réservation client
 - `Dish` / `DishSubCategory` / `MenuOfTheDay` — Carte et menus
 - `Event` — Événements/soirées
 - `ContactMessage` — Messages formulaire contact
 
-## RBAC (permissions employé)
+## Réservations en ligne (tables classiques)
 
-Enum `AdminPermission` : `MANAGE_MENU` | `MANAGE_EVENTS` | `MANAGE_RESERVATIONS` | `MANAGE_PERSONNEL` | `MANAGE_HOURS`
-
-- L'admin `User` (email/mdp) a accès total implicite
-- Un `Employee` avec des permissions peut accéder aux onglets admin correspondants via son PIN
-- Sans permission, l'employé peut uniquement utiliser `/badging` (pointeuse)
-- La nav admin filtre les onglets selon les permissions (`AdminNav` reçoit `isFullAdmin` + `permissions[]`)
+- Horizon : `RESERVATION_WINDOW_DAYS` jours calendaires à partir d'aujourd'hui (`src/lib/config.ts`)
+- Bloquées si le service (midi/soir) est fermé ce jour-là dans `WeeklyOpeningHours` (`src/lib/opening-schedule.ts`)
+- Ces deux règles ne s'appliquent qu'aux tables classiques (auto-confirmées) — les demandes de groupe (`isGroup`, validées à la main) n'y sont pas soumises
 
 ## Sécurité importante
 
-- **Ne jamais exposer `AUTH_SECRET`** — utilisé pour HMAC des cookies ET pour `getPinIndex()`
-- PIN stocké en bcrypt (`pinHash`) + index HMAC unique (`pinIndex`) pour lookup O(1) sans itérer tous les employés
-- Comparaison bcrypt systématique même si PIN non trouvé (protection timing attack)
+- **Ne jamais exposer `AUTH_SECRET`** — utilisé pour le HMAC du cookie de session admin
+- Comparaison bcrypt systématique même si l'email n'est pas trouvé (protection timing attack)
 - Zod validation sur toutes les Server Actions
 
 ## Commandes utiles
